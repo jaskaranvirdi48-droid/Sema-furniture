@@ -5,30 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Sema Furniture</title>
   <meta name="theme-color" content="#78350f" />
-  <link rel="manifest" href="manifest.json" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #f5f5f4; color: #292524; padding-bottom: 70px; }
-    
     header { background: #78350f; color: #fff; padding: 14px 16px; position: sticky; top: 0; z-index: 50; }
     .header-top { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
+    .logo { font-size: 18px; font-weight: 900; }
     .owner-badge { background: #92400e; color: #fde68a; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-left: 6px; }
     .subtext { font-size: 11px; color: #fde68a; margin-top: 3px; }
-    
     .tab-bar { display: grid; grid-template-columns: repeat(4, 1fr); background: #ffffff; border-bottom: 2px solid #e7e5e4; position: sticky; top: 62px; z-index: 40; }
     .tab-btn { padding: 12px 2px; font-size: 11px; font-weight: 700; border: none; background: none; color: #78716c; text-align: center; border-bottom: 3px solid transparent; cursor: pointer; }
     .tab-btn.active { color: #78350f; border-bottom: 3px solid #78350f; background: #fafaf9; }
-    
     .content-area { max-width: 600px; margin: 0 auto; padding: 14px; }
-    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e7e5e4; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e7e5e4; padding: 16px; margin-bottom: 14px; }
     .card-title { font-size: 14px; font-weight: 800; color: #1c1917; margin-bottom: 12px; }
-    
     .form-group { margin-bottom: 12px; }
     label { display: block; font-size: 11px; font-weight: 700; color: #57534e; margin-bottom: 4px; }
     input, select { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #d6d3d1; border-radius: 8px; background: #fafaf9; outline: none; }
-    input:focus, select:focus { border-color: #78350f; background: #fff; }
-    
     .checklist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .checklist-box { border: 1px solid #e7e5e4; border-radius: 8px; background: #fafaf9; max-height: 240px; overflow-y: auto; padding: 6px; }
     .worker-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e7e5e4; }
@@ -37,21 +30,18 @@
     .worker-controls { display: flex; gap: 6px; align-items: center; }
     .worker-controls select { padding: 4px; font-size: 11px; width: auto; }
     .worker-controls input { width: 75px; padding: 4px; font-size: 12px; }
-    
     .btn-main { width: 100%; background: #78350f; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 6px; }
     .btn-dark { width: 100%; background: #292524; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-green { width: 100%; background: #16a34a; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    
     table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
     th, td { border: 1px solid #e7e5e4; padding: 8px; text-align: left; }
     th { background: #f5f5f4; font-weight: 700; }
-    
     .hidden { display: none !important; }
     .badge-pill { display: inline-flex; align-items: center; gap: 4px; background: #e7e5e4; padding: 4px 8px; border-radius: 20px; font-size: 11px; margin: 3px; font-weight: 600; }
   </style>
 </head>
 <body>
-<header>
+  <header>
     <div class="header-top">
       <div style="display:flex; align-items:center;">
         <span class="logo">🪵 SEMA FURNITURE</span>
@@ -74,17 +64,14 @@
     <div id="section-daily">
       <div class="card">
         <div class="card-title">📅 Daily Attendance & Cash Advances</div>
-        
         <div class="form-group">
           <label>Work Date</label>
           <input type="date" id="workDate" />
         </div>
-        
         <div class="form-group">
           <label>Client Site</label>
           <select id="workSite"></select>
         </div>
-
         <div class="checklist-header">
           <label>Present Workers at Site:</label>
           <div>
@@ -92,14 +79,11 @@
             <a href="javascript:void(0)" onclick="selectAllStaff(false)" style="font-size:11px; color:#78716c;">None</a>
           </div>
         </div>
-
         <div id="staffChecklist" class="checklist-box"></div>
-
         <div class="form-group" style="margin-top:10px;">
           <label>Remarks / Work Note (Optional)</label>
           <input type="text" id="workNote" placeholder="e.g., Wardrobe framing, laminate work" />
         </div>
-
         <button class="btn-main" onclick="saveAttendance()">💾 Save Attendance for Selected</button>
       </div>
 
@@ -138,7 +122,6 @@
             <p style="font-size:11px; font-weight:bold; margin-top:4px;">Site: <span id="lblClientSite"></span></p>
             <p style="font-size:11px; color:#78716c;">Period: <span id="lblClientPeriod"></span></p>
           </div>
-
           <table>
             <thead>
               <tr>
@@ -148,8 +131,8 @@
               </tr>
             </thead>
             <tbody id="tblClientBody"></tbody>
-          </table>
-<div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
+            </table>
+          <div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
             <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
               <span>Total Shifts Deployed:</span>
               <span id="lblTotalShifts">0</span>
@@ -160,7 +143,6 @@
             </div>
           </div>
         </div>
-
         <button class="btn-green" style="margin-top:10px;" onclick="whatsappClientBill()">💬 Share on WhatsApp</button>
       </div>
     </div>
@@ -193,7 +175,6 @@
           <p style="font-size:12px; font-weight:bold; margin-top:4px;">Worker: <span id="lblWorkerName"></span></p>
           <p style="font-size:11px; color:#78716c;">Period: <span id="lblKhataPeriod"></span></p>
         </div>
-
         <table>
           <thead>
             <tr>
@@ -204,7 +185,6 @@
           </thead>
           <tbody id="tblAdvancesBody"></tbody>
         </table>
-
         <div style="margin-top:12px; padding:10px; background:#f5f5f4; border-radius:6px; font-size:12px;">
           <div style="display:flex; justify-content:space-between;">
             <span>Days Worked:</span>
@@ -223,7 +203,6 @@
             <span>₹<span id="lblNetPayable">0</span></span>
           </div>
         </div>
-
         <button class="btn-dark" style="margin-top:10px;" onclick="window.print()">🖨️ Print / Save as PDF</button>
       </div>
     </div>
@@ -231,7 +210,7 @@
     <!-- 4. MANAGE SETUP & GOOGLE SHEETS -->
     <div id="section-manage" class="hidden">
       <div class="card" style="background:#ecfdf5; border-color:#a7f3d0;">
-<div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
+        <div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
         <p style="font-size:11px; color:#047857; margin-bottom:8px;">
           Paste your Google Web App URL below to automatically save all attendance entries to your Google Sheet.
         </p>
@@ -315,38 +294,42 @@
       for (var i = 0; i < db.sites.length; i++) {
         siteHtml += '<option value="' + db.sites[i].name + '">' + db.sites[i].name + '</option>';
       }
-      document.getElementById('workSite').innerHTML = siteHtml || '<option>No sites added</option>';
-      document.getElementById('billSite').innerHTML = siteHtml || '<option>No sites added</option>';
+      var workSite = document.getElementById('workSite');
+      var billSite = document.getElementById('billSite');
+      if (workSite) workSite.innerHTML = siteHtml || '<option>No sites added</option>';
+      if (billSite) billSite.innerHTML = siteHtml || '<option>No sites added</option>';
 
       var staffHtml = '';
       for (var j = 0; j < db.staff.length; j++) {
         staffHtml += '<option value="' + db.staff[j].name + '">' + db.staff[j].name + '</option>';
       }
-      document.getElementById('khataStaff').innerHTML = staffHtml || '<option>No staff added</option>';
-
+      var khataStaff = document.getElementById('khataStaff');
+      if (khataStaff) khataStaff.innerHTML = staffHtml || '<option>No staff added</option>';
       var chk = document.getElementById('staffChecklist');
-      if (db.staff.length === 0) {
-        chk.innerHTML = '<p style="padding:10px; font-size:12px; color:#888;">No staff registered yet.</p>';
-} else {
-        var chkHtml = '';
-        for (var k = 0; k < db.staff.length; k++) {
-          var s = db.staff[k];
-          chkHtml += '<div class="worker-row">' +
-            '<label class="worker-label">' +
-              '<input type="checkbox" id="chkStaff_' + k + '" value="' + s.name + '" class="staff-cb" />' +
-              '<span>' + s.name + '</span>' +
-            '</label>' +
-            '<div class="worker-controls">' +
-              '<select id="shiftStaff_' + k + '">' +
-                '<option value="1">1 Day</option>' +
-                '<option value="0.5">½ Day</option>' +
-                '<option value="1.5">1.5 OT</option>' +
-              '</select>' +
-              '<input type="number" id="advStaff_' + k + '" placeholder="Adv ₹" />' +
-            '</div>' +
-          '</div>';
+      if (chk) {
+        if (db.staff.length === 0) {
+          chk.innerHTML = '<p style="padding:10px; font-size:12px; color:#888;">No staff registered yet.</p>';
+        } else {
+          var chkHtml = '';
+          for (var k = 0; k < db.staff.length; k++) {
+            var s = db.staff[k];
+            chkHtml += '<div class="worker-row">' +
+              '<label class="worker-label">' +
+                '<input type="checkbox" id="chkStaff_' + k + '" value="' + s.name + '" class="staff-cb" />' +
+                '<span>' + s.name + '</span>' +
+              '</label>' +
+              '<div class="worker-controls">' +
+                '<select id="shiftStaff_' + k + '">' +
+                  '<option value="1">1 Day</option>' +
+                  '<option value="0.5">½ Day</option>' +
+                  '<option value="1.5">1.5 OT</option>' +
+                '</select>' +
+                '<input type="number" id="advStaff_' + k + '" placeholder="Adv ₹" />' +
+              '</div>' +
+            '</div>';
+          }
+          chk.innerHTML = chkHtml;
         }
-        chk.innerHTML = chkHtml;
       }
 
       var staffPills = '';
@@ -354,33 +337,39 @@
         staffPills += '<span class="badge-pill">' + db.staff[m].name + ' (₹' + db.staff[m].wage + '/d)' +
           '<b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteStaff(' + m + ')">&times;</b></span>';
       }
-      document.getElementById('staffListPills').innerHTML = staffPills;
+      var spEl = document.getElementById('staffListPills');
+      if (spEl) spEl.innerHTML = staffPills;
 
       var sitePills = '';
       for (var n = 0; n < db.sites.length; n++) {
         sitePills += '<span class="badge-pill">' + db.sites[n].name + ' (₹' + db.sites[n].rate + '/shift)' +
           '<b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteSite(' + n + ')">&times;</b></span>';
       }
-      document.getElementById('siteListPills').innerHTML = sitePills;
+      var stEl = document.getElementById('siteListPills');
+      if (stEl) stEl.innerHTML = sitePills;
 
       var recentLogs = document.getElementById('recentLogs');
-      var r = db.logs.slice(-5).reverse();
-      if (r.length === 0) {
-        recentLogs.innerHTML = '<p style="color:#888;">No entries recorded yet.</p>';
-      } else {
-        var logsHtml = '';
-        for (var p = 0; p < r.length; p++) {
-          var l = r[p];
-          logsHtml += '<div style="padding:6px 0; border-bottom:1px solid #eee;">' +
-            '<b>' + l.date + '</b>: ' + l.staff + ' @ ' + l.site + ' (' + l.shift + ' shift)' +
-            (Number(l.advance) > 0 ? '<span style="color:#dc2626; font-weight:bold; margin-left:4px;">Adv ₹' + l.advance + '</span>' : '') +
-          '</div>';
+      if (recentLogs) {
+        var r = db.logs.slice(-5).reverse();
+        if (r.length === 0) {
+          recentLogs.innerHTML = '<p style="color:#888;">No entries recorded yet.</p>';
+        } else {
+          var logsHtml = '';
+          for (var p = 0; p < r.length; p++) {
+            var l = r[p];
+            logsHtml += '<div style="padding:6px 0; border-bottom:1px solid #eee;">' +
+              '<b>' + l.date + '</b>: ' + l.staff + ' @ ' + l.site + ' (' + l.shift + ' shift)' +
+              (Number(l.advance) > 0 ? '<span style="color:#dc2626; font-weight:bold; margin-left:4px;">Adv ₹' + l.advance + '</span>' : '') +
+            '</div>';
+          }
+          recentLogs.innerHTML = logsHtml;
         }
-        recentLogs.innerHTML = logsHtml;
       }
 
-      document.getElementById('cloudUrlInput').value = db.cloudUrl || '';
-      document.getElementById('cloudSyncStatus').textContent = db.cloudUrl ? '✅ Connected to Google Sheets' : '⚠️ Cloud sync link not set';
+      var cloudUrlEl = document.getElementById('cloudUrlInput');
+      if (cloudUrlEl) cloudUrlEl.value = db.cloudUrl || '';
+      var statusEl = document.getElementById('cloudSyncStatus');
+      if (statusEl) statusEl.textContent = db.cloudUrl ? '✅ Connected to Google Sheets' : '⚠️ Cloud sync link not set';
     }
 
     function selectAllStaff(val) {
@@ -425,7 +414,8 @@
 
       document.getElementById('workNote').value = '';
       saveDb();
-if (db.cloudUrl) {
+
+      if (db.cloudUrl) {
         fetch(db.cloudUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -527,7 +517,7 @@ if (db.cloudUrl) {
         var dt = dates[i];
         var w = clientReport.dateMap[dt];
         var staffNames = [];
-for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
+        for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
         msg += "• " + dt + ": " + w.length + " staff (" + staffNames.join(', ') + ")\n";
       }
       msg += "\nTotal Shifts: *" + clientReport.totalShifts + "*\n*Total Due: ₹" + clientReport.totalPayment.toLocaleString('en-IN') + "*";
@@ -577,7 +567,11 @@ for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
       document.getElementById('khataResultBox').className = 'card';
     }
 
-   renderAll();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderAll);
+    } else {
+      renderAll();
+    }
   </script>
 </body>
 </html>
