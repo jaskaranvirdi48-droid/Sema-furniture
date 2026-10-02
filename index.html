@@ -6,572 +6,426 @@
   <title>Sema Furniture</title>
   <meta name="theme-color" content="#78350f" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #f5f5f4; color: #292524; padding-bottom: 70px; }
-    header { background: #78350f; color: #fff; padding: 14px 16px; position: sticky; top: 0; z-index: 50; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 18px; font-weight: 900; }
-    .owner-badge { background: #92400e; color: #fde68a; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-left: 6px; }
-    .subtext { font-size: 11px; color: #fde68a; margin-top: 3px; }
-    .tab-bar { display: grid; grid-template-columns: repeat(4, 1fr); background: #ffffff; border-bottom: 2px solid #e7e5e4; position: sticky; top: 62px; z-index: 40; }
-    .tab-btn { padding: 12px 2px; font-size: 11px; font-weight: 700; border: none; background: none; color: #78716c; text-align: center; border-bottom: 3px solid transparent; cursor: pointer; }
-    .tab-btn.active { color: #78350f; border-bottom: 3px solid #78350f; background: #fafaf9; }
-    .content-area { max-width: 600px; margin: 0 auto; padding: 14px; }
-    .card { background: #ffffff; border-radius: 12px; border: 1px solid #e7e5e4; padding: 16px; margin-bottom: 14px; }
-    .card-title { font-size: 14px; font-weight: 800; color: #1c1917; margin-bottom: 12px; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 11px; font-weight: 700; color: #57534e; margin-bottom: 4px; }
-    input, select { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #d6d3d1; border-radius: 8px; background: #fafaf9; outline: none; }
-    .checklist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .checklist-box { border: 1px solid #e7e5e4; border-radius: 8px; background: #fafaf9; max-height: 240px; overflow-y: auto; padding: 6px; }
-    .worker-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e7e5e4; }
-    .worker-label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer; flex: 1; }
-    .worker-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #78350f; }
-    .worker-controls { display: flex; gap: 6px; align-items: center; }
-    .worker-controls select { padding: 4px; font-size: 11px; width: auto; }
-    .worker-controls input { width: 75px; padding: 4px; font-size: 12px; }
-    .btn-main { width: 100%; background: #78350f; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 6px; }
-    .btn-dark { width: 100%; background: #292524; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .btn-green { width: 100%; background: #16a34a; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: #f5f5f4; color: #292524; padding-bottom: 60px; }
+    header { background: #78350f; color: #fff; padding: 12px 16px; }
+    .title { font-size: 18px; font-weight: bold; }
+    .sub { font-size: 11px; color: #fde68a; }
+    .nav { display: flex; background: #fff; border-bottom: 2px solid #ddd; }
+    .nav button { flex: 1; padding: 12px 2px; font-size: 12px; font-weight: bold; border: none; background: none; color: #666; border-bottom: 3px solid transparent; }
+    .nav button.active { color: #78350f; border-bottom: 3px solid #78350f; background: #fafaf9; }
+    .container { max-width: 500px; margin: 0 auto; padding: 12px; }
+    .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+    .card-title { font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #78350f; }
+    label { display: block; font-size: 11px; font-weight: bold; color: #555; margin-bottom: 4px; }
+    input, select { width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px; background: #fafaf9; }
+    .btn-main { width: 100%; background: #78350f; color: #fff; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    .btn-dark { width: 100%; background: #333; color: #fff; border: none; padding: 10px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 4px; }
+    .btn-green { width: 100%; background: #16a34a; color: #fff; border: none; padding: 10px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 8px; }
+    .worker-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 6px; margin-bottom: 6px; }
+    .worker-row label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; margin: 0; }
+    .worker-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: #78350f; margin: 0; }
+    .worker-inputs { display: flex; gap: 6px; }
+    .worker-inputs select { width: 75px; padding: 4px; font-size: 12px; margin: 0; }
+    .worker-inputs input { width: 70px; padding: 4px; font-size: 12px; margin: 0; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-    th, td { border: 1px solid #e7e5e4; padding: 8px; text-align: left; }
-    th { background: #f5f5f4; font-weight: 700; }
+    th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+    th { background: #eee; }
     .hidden { display: none !important; }
-    .badge-pill { display: inline-flex; align-items: center; gap: 4px; background: #e7e5e4; padding: 4px 8px; border-radius: 20px; font-size: 11px; margin: 3px; font-weight: 600; }
+    .pill { display: inline-block; background: #eee; padding: 4px 8px; border-radius: 12px; font-size: 11px; margin: 2px; }
   </style>
 </head>
 <body>
+
   <header>
-    <div class="header-top">
-      <div style="display:flex; align-items:center;">
-        <span class="logo">🪵 SEMA FURNITURE</span>
-        <span class="owner-badge">Prop: Sewak Singh</span>
-      </div>
-    </div>
-    <div class="subtext">Staff Attendance, Advances & Client Billing</div>
+    <div class="title">🪵 SEMA FURNITURE</div>
+    <div class="sub">Prop: Sewak Singh | Attendance & Billing</div>
   </header>
 
-  <nav class="tab-bar">
-    <button class="tab-btn active" id="btn-daily" onclick="openTab('daily')">Daily<br>Entry</button>
-    <button class="tab-btn" id="btn-billing" onclick="openTab('billing')">Client<br>Bill</button>
-    <button class="tab-btn" id="btn-khata" onclick="openTab('khata')">Staff<br>Khata</button>
-    <button class="tab-btn" id="btn-manage" onclick="openTab('manage')">Manage<br>Setup</button>
-  </nav>
+  <div class="nav">
+    <button id="b-daily" class="active" onclick="showTab('daily')">Daily<br>Entry</button>
+    <button id="b-bill" onclick="showTab('bill')">Client<br>Bill</button>
+    <button id="b-khata" onclick="showTab('khata')">Staff<br>Khata</button>
+    <button id="b-manage" onclick="showTab('manage')">Manage<br>Setup</button>
+  </div>
 
-  <div class="content-area">
+  <div class="container">
 
     <!-- 1. DAILY ENTRY -->
-    <div id="section-daily">
+    <div id="v-daily">
       <div class="card">
-        <div class="card-title">📅 Daily Attendance & Cash Advances</div>
-        <div class="form-group">
-          <label>Work Date</label>
-          <input type="date" id="workDate" />
-        </div>
-        <div class="form-group">
-          <label>Client Site</label>
-          <select id="workSite"></select>
-        </div>
-        <div class="checklist-header">
-          <label>Present Workers at Site:</label>
-          <div>
-            <a href="javascript:void(0)" onclick="selectAllStaff(true)" style="font-size:11px; color:#78350f; font-weight:bold; margin-right:8px;">Select All</a>
-            <a href="javascript:void(0)" onclick="selectAllStaff(false)" style="font-size:11px; color:#78716c;">None</a>
-          </div>
-        </div>
-        <div id="staffChecklist" class="checklist-box"></div>
-        <div class="form-group" style="margin-top:10px;">
-          <label>Remarks / Work Note (Optional)</label>
-          <input type="text" id="workNote" placeholder="e.g., Wardrobe framing, laminate work" />
-        </div>
-        <button class="btn-main" onclick="saveAttendance()">💾 Save Attendance for Selected</button>
+        <div class="card-title">Mark Attendance & Advances</div>
+        <label>Work Date</label>
+        <input type="date" id="inDate" />
+
+        <label>Select Site</label>
+        <select id="inSite"></select>
+
+        <label style="margin-top:4px;">Workers Present Today:</label>
+        <div id="workerList" style="max-height: 220px; overflow-y: auto; border: 1px solid #eee; padding: 6px; border-radius: 6px; background: #fafaf9; margin-bottom: 10px;"></div>
+        <label>Work Remarks (Optional)</label>
+        <input type="text" id="inNote" placeholder="e.g. Wardrobe framing" />
+
+        <button class="btn-main" onclick="saveData()">💾 Save Attendance</button>
       </div>
 
       <div class="card">
-        <div class="card-title" style="font-size:12px;">Recent Entries</div>
-        <div id="recentLogs" style="font-size:12px; color:#44403c;"></div>
+        <div class="card-title" style="font-size:12px;">Recent Logs</div>
+        <div id="logList" style="font-size:12px; color:#555;"></div>
       </div>
     </div>
 
-    <!-- 2. CLIENT 15-DAY BILLING -->
-    <div id="section-billing" class="hidden">
+    <!-- 2. CLIENT BILL -->
+    <div id="v-bill" class="hidden">
       <div class="card">
-        <div class="card-title">📄 Client 15-Day Billing Statement</div>
-        <div class="form-group">
-          <label>Client Site</label>
-          <select id="billSite"></select>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group">
+        <div class="card-title">Client 15-Day Bill</div>
+        <label>Client Site</label>
+        <select id="billSite"></select>
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1;">
             <label>From Date</label>
             <input type="date" id="billFrom" />
           </div>
-          <div class="form-group">
+          <div style="flex:1;">
             <label>To Date</label>
             <input type="date" id="billTo" />
           </div>
         </div>
-        <button class="btn-dark" onclick="calculateClientBill()">🔍 Compute Site Bill</button>
+        <button class="btn-dark" onclick="makeBill()">Compute Bill</button>
       </div>
 
-      <div id="clientResultBox" class="card hidden">
-        <div id="clientStatementArea">
-          <div style="border-bottom:2px solid #78350f; padding-bottom:8px; margin-bottom:8px;">
-            <h3 style="font-size:16px; color:#78350f; font-weight:900;">SEMA FURNITURE</h3>
-            <p style="font-size:11px; color:#78716c;">Proprietor: Sewak Singh</p>
-            <p style="font-size:11px; font-weight:bold; margin-top:4px;">Site: <span id="lblClientSite"></span></p>
-            <p style="font-size:11px; color:#78716c;">Period: <span id="lblClientPeriod"></span></p>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Staff Deployed</th>
-                <th>Worker Names</th>
-              </tr>
-            </thead>
-            <tbody id="tblClientBody"></tbody>
-            </table>
-          <div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
-            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
-              <span>Total Shifts Deployed:</span>
-              <span id="lblTotalShifts">0</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:#78350f; margin-top:4px; border-top:1px solid #fde68a; padding-top:4px;">
-              <span>TOTAL DUE:</span>
-              <span>₹<span id="lblClientTotal">0</span></span>
-            </div>
-          </div>
-        </div>
-        <button class="btn-green" style="margin-top:10px;" onclick="whatsappClientBill()">💬 Share on WhatsApp</button>
-      </div>
-    </div>
-
-    <!-- 3. STAFF CLOSING KHATA -->
-    <div id="section-khata" class="hidden">
-      <div class="card">
-        <div class="card-title">👷 Staff Salary & Advance Settlement</div>
-        <div class="form-group">
-          <label>Select Worker</label>
-          <select id="khataStaff"></select>
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div class="form-group">
-            <label>From Date</label>
-            <input type="date" id="khataFrom" />
-          </div>
-          <div class="form-group">
-            <label>To Date</label>
-            <input type="date" id="khataTo" />
-          </div>
-        </div>
-        <button class="btn-dark" onclick="calculateStaffKhata()">📊 Calculate Settlement Slip</button>
-      </div>
-
-      <div id="khataResultBox" class="card hidden">
-        <div style="border-bottom:2px solid #78350f; padding-bottom:8px; margin-bottom:8px;">
-          <h3 style="font-size:16px; color:#78350f; font-weight:900;">SEMA FURNITURE</h3>
-          <p style="font-size:11px; color:#78716c;">Staff Settlement Slip (Prop: Sewak Singh)</p>
-          <p style="font-size:12px; font-weight:bold; margin-top:4px;">Worker: <span id="lblWorkerName"></span></p>
-          <p style="font-size:11px; color:#78716c;">Period: <span id="lblKhataPeriod"></span></p>
-        </div>
+      <div id="billBox" class="card hidden">
+        <h3 id="bSiteHead" style="color:#78350f; font-size:15px;"></h3>
+        <p id="bPeriod" style="font-size:11px; color:#666;"></p>
         <table>
           <thead>
-            <tr>
-              <th>Date</th>
-              <th>Site</th>
-              <th>Advance Deducted</th>
-            </tr>
+            <tr><th>Date</th><th>Shifts</th><th>Staff</th></tr>
           </thead>
-          <tbody id="tblAdvancesBody"></tbody>
+          <tbody id="bRows"></tbody>
         </table>
-        <div style="margin-top:12px; padding:10px; background:#f5f5f4; border-radius:6px; font-size:12px;">
-          <div style="display:flex; justify-content:space-between;">
-            <span>Days Worked:</span>
-            <span id="lblDaysWorked" style="font-weight:700;">0</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-top:2px;">
-            <span>Gross Earned:</span>
-            <span style="font-weight:700;">₹<span id="lblGrossEarned">0</span></span>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-top:2px; color:#dc2626;">
-            <span>Less Advances:</span>
-            <span style="font-weight:700;">- ₹<span id="lblTotalAdvances">0</span></span>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:900; color:#78350f; margin-top:6px; border-top:1px solid #d6d3d1; padding-top:4px;">
-            <span>NET BALANCE TO PAY:</span>
-            <span>₹<span id="lblNetPayable">0</span></span>
+        <div style="margin-top:10px; padding:10px; background:#fef3c7; border-radius:6px;">
+          <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px;">
+            <span>Total Shifts: <span id="bTotalShifts">0</span></span>
+            <span style="color:#78350f; font-size:15px;">Due: ₹<span id="bTotalDue">0</span></span>
           </div>
         </div>
-        <button class="btn-dark" style="margin-top:10px;" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        <button class="btn-green" onclick="sendBillWhatsApp()">💬 Send on WhatsApp</button>
       </div>
     </div>
 
-    <!-- 4. MANAGE SETUP & GOOGLE SHEETS -->
-    <div id="section-manage" class="hidden">
+    <!-- 3. STAFF KHATA -->
+    <div id="v-khata" class="hidden">
+      <div class="card">
+        <div class="card-title">Staff Salary & Advances</div>
+        <label>Worker</label>
+        <select id="kStaff"></select>
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1;">
+            <label>From</label>
+            <input type="date" id="kFrom" />
+          </div>
+          <div style="flex:1;">
+            <label>To</label>
+            <input type="date" id="kTo" />
+          </div>
+        </div>
+        <button class="btn-dark" onclick="makeKhata()">Calculate Slip</button>
+      </div>
+
+      <div id="khataBox" class="card hidden">
+        <h3 id="kNameHead" style="color:#78350f; font-size:15px;"></h3>
+        <p id="kPeriod" style="font-size:11px; color:#666;"></p>
+        <table>
+          <thead><tr><th>Date</th><th>Site</th><th>Advance</th></tr></thead>
+          <tbody id="kRows"></tbody>
+        </table>
+        <div style="margin-top:10px; padding:10px; background:#f5f5f4; border-radius:6px; font-size:12px;">
+          <div style="display:flex; justify-content:space-between;"><span>Days Worked:</span><b id="kDays">0</b></div>
+          <div style="display:flex; justify-content:space-between; margin-top:2px;"><span>Gross Wage:</span><b>₹<span id="kGross">0</span></b></div>
+          <div style="display:flex; justify-content:space-between; margin-top:2px; color:#dc2626;"><span>Advances:</span><b>- ₹<span id="kAdv">0</span></b></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:bold; color:#78350f; margin-top:6px; border-top:1px solid #ddd; padding-top:4px;">
+            <span>NET TO PAY:</span><span>₹<span id="kNet">0</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. MANAGE -->
+    <div id="v-manage" class="hidden">
       <div class="card" style="background:#ecfdf5; border-color:#a7f3d0;">
-        <div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
-        <p style="font-size:11px; color:#047857; margin-bottom:8px;">
-          Paste your Google Web App URL below to automatically save all attendance entries to your Google Sheet.
-        </p>
-        <input type="url" id="cloudUrlInput" placeholder="https://script.google.com/macros/s/.../exec" style="background:#fff; margin-bottom:8px;" />
-        <button class="btn-dark" style="background:#065f46;" onclick="saveCloudUrl()">Save Cloud URL</button>
-        <p id="cloudSyncStatus" style="font-size:11px; font-weight:bold; margin-top:6px; color:#047857;"></p>
+        <div class="card-title" style="color:#065f46;">Google Sheets URL</div>
+        <input type="url" id="sheetUrl" placeholder="https://script.google.com/.../exec" style="background:#fff;" />
+        <button class="btn-dark" style="background:#065f46;" onclick="saveUrl()">Save Google URL</button>
       </div>
 
       <div class="card">
         <div class="card-title">Add Staff Worker</div>
-        <div class="form-group">
-          <input type="text" id="addWorkerName" placeholder="Worker Name (e.g., Ramesh Carpenter)" />
-        </div>
-        <div class="form-group">
-          <input type="number" id="addWorkerWage" placeholder="Daily Wage in ₹ (e.g., 900)" />
-        </div>
-        <button class="btn-dark" onclick="addStaff()">Add Worker</button>
-        <div id="staffListPills" style="margin-top:8px;"></div>
+        <input type="text" id="newWorker" placeholder="Worker Name" />
+        <input type="number" id="newWage" placeholder="Daily Wage (e.g. 900)" />
+        <button class="btn-dark" onclick="addWorker()">Add Worker</button>
+        <div id="pillsStaff" style="margin-top:8px;"></div>
       </div>
 
       <div class="card">
         <div class="card-title">Add Client Site</div>
-        <div class="form-group">
-          <input type="text" id="addSiteName" placeholder="Client Site (e.g., Sharma Villa)" />
-        </div>
-        <div class="form-group">
-          <input type="number" id="addSiteRate" placeholder="Shift Rate Charged to Client ₹ (e.g., 1200)" />
-        </div>
+        <input type="text" id="newSite" placeholder="Site Name" />
+        <input type="number" id="newRate" placeholder="Shift Rate Charged to Client (e.g. 1200)" />
         <button class="btn-dark" onclick="addSite()">Add Site</button>
-        <div id="siteListPills" style="margin-top:8px;"></div>
+        <div id="pillsSites" style="margin-top:8px;"></div>
       </div>
     </div>
 
   </div>
 
   <script>
-    var db = {
-      cloudUrl: '',
-      staff: [
-        { name: 'Ramesh Carpenter', wage: 900 },
-        { name: 'Sunil Helper', wage: 600 },
-        { name: 'Amit Polisher', wage: 850 }
-      ],
-      sites: [
-        { name: 'Sharma Villa Interior', rate: 1200 },
-        { name: 'DLF Flat 402 Work', rate: 1200 }
-      ],
+    var data = {
+      url: '',
+      staff: [{name: 'Ramesh Carpenter', wage: 900}, {name: 'Sunil Helper', wage: 600}, {name: 'Amit Polisher', wage: 850}],
+      sites: [{name: 'Sharma Villa Interior', rate: 1200}, {name: 'DLF Flat 402 Work', rate: 1200}],
       logs: []
     };
 
     try {
-      var saved = localStorage.getItem('semaDb');
-      if (saved) db = JSON.parse(saved);
+      var saved = localStorage.getItem('sema_data_v3');
+      if (saved) data = JSON.parse(saved);
     } catch(e) {}
 
-    function saveDb() {
-      try {
-        localStorage.setItem('semaDb', JSON.stringify(db));
-      } catch(e) {}
-      renderAll();
+    function persist() {
+      try { localStorage.setItem('sema_data_v3', JSON.stringify(data)); } catch(e) {}
+      refresh();
     }
 
-    function openTab(tabName) {
-      var tabs = ['daily', 'billing', 'khata', 'manage'];
-      for (var i = 0; i < tabs.length; i++) {
-        var t = tabs[i];
-        var sec = document.getElementById('section-' + t);
-        var btn = document.getElementById('btn-' + t);
-        if (sec) sec.className = (t === tabName) ? '' : 'hidden';
-        if (btn) btn.className = (t === tabName) ? 'tab-btn active' : 'tab-btn';
-      }
+    function showTab(t) {
+      ['daily', 'bill', 'khata', 'manage'].forEach(function(tab) {
+        document.getElementById('v-' + tab).className = (tab === t) ? '' : 'hidden';
+        document.getElementById('b-' + tab).className = (tab === t) ? 'active' : '';
+      });
     }
 
-    function renderAll() {
-      var dateField = document.getElementById('workDate');
-      if (dateField && !dateField.value) {
-        dateField.value = new Date().toISOString().split('T')[0];
+    function refresh() {
+      // Set today's date automatically
+      var d = document.getElementById('inDate');
+      if (d && !d.value) {
+        d.value = new Date().toISOString().split('T')[0];
       }
 
+      // Site dropdowns
       var siteHtml = '';
-      for (var i = 0; i < db.sites.length; i++) {
-        siteHtml += '<option value="' + db.sites[i].name + '">' + db.sites[i].name + '</option>';
+      for (var i = 0; i < data.sites.length; i++) {
+        siteHtml += '<option value="' + data.sites[i].name + '">' + data.sites[i].name + '</option>';
       }
-      var workSite = document.getElementById('workSite');
-      var billSite = document.getElementById('billSite');
-      if (workSite) workSite.innerHTML = siteHtml || '<option>No sites added</option>';
-      if (billSite) billSite.innerHTML = siteHtml || '<option>No sites added</option>';
+      document.getElementById('inSite').innerHTML = siteHtml || '<option>No sites</option>';
+      document.getElementById('billSite').innerHTML = siteHtml || '<option>No sites</option>';
 
+      // Staff dropdown
       var staffHtml = '';
-      for (var j = 0; j < db.staff.length; j++) {
-        staffHtml += '<option value="' + db.staff[j].name + '">' + db.staff[j].name + '</option>';
+      for (var j = 0; j < data.staff.length; j++) {
+        staffHtml += '<option value="' + data.staff[j].name + '">' + data.staff[j].name + '</option>';
       }
-      var khataStaff = document.getElementById('khataStaff');
-      if (khataStaff) khataStaff.innerHTML = staffHtml || '<option>No staff added</option>';
-      var chk = document.getElementById('staffChecklist');
-      if (chk) {
-        if (db.staff.length === 0) {
-          chk.innerHTML = '<p style="padding:10px; font-size:12px; color:#888;">No staff registered yet.</p>';
-        } else {
-          var chkHtml = '';
-          for (var k = 0; k < db.staff.length; k++) {
-            var s = db.staff[k];
-            chkHtml += '<div class="worker-row">' +
-              '<label class="worker-label">' +
-                '<input type="checkbox" id="chkStaff_' + k + '" value="' + s.name + '" class="staff-cb" />' +
-                '<span>' + s.name + '</span>' +
-              '</label>' +
-              '<div class="worker-controls">' +
-                '<select id="shiftStaff_' + k + '">' +
-                  '<option value="1">1 Day</option>' +
-                  '<option value="0.5">½ Day</option>' +
-                  '<option value="1.5">1.5 OT</option>' +
-                '</select>' +
-                '<input type="number" id="advStaff_' + k + '" placeholder="Adv ₹" />' +
-              '</div>' +
-            '</div>';
-          }
-          chk.innerHTML = chkHtml;
-        }
-      }
+      document.getElementById('kStaff').innerHTML = staffHtml || '<option>No staff</option>';
 
-      var staffPills = '';
-      for (var m = 0; m < db.staff.length; m++) {
-        staffPills += '<span class="badge-pill">' + db.staff[m].name + ' (₹' + db.staff[m].wage + '/d)' +
-          '<b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteStaff(' + m + ')">&times;</b></span>';
+      // Worker checklist
+      var wList = document.getElementById('workerList');
+      var chkHtml = '';
+      for (var k = 0; k < data.staff.length; k++) {
+        chkHtml += '<div class="worker-row">' +
+          '<label><input type="checkbox" id="w_chk_' + k + '" value="' + data.staff[k].name + '"> ' + data.staff[k].name + '</label>' +
+          '<div class="worker-inputs">' +
+            '<select id="w_shift_' + k + '"><option value="1">1</option><option value="0.5">½</option><option value="1.5">1.5</option></select>' +
+            '<input type="number" id="w_adv_' + k + '" placeholder="Adv ₹">' +
+          '</div>' +
+        '</div>';
       }
-      var spEl = document.getElementById('staffListPills');
-      if (spEl) spEl.innerHTML = staffPills;
+      wList.innerHTML = chkHtml || '<p style="color:#888; font-size:12px;">No workers added.</p>';
 
-      var sitePills = '';
-      for (var n = 0; n < db.sites.length; n++) {
-        sitePills += '<span class="badge-pill">' + db.sites[n].name + ' (₹' + db.sites[n].rate + '/shift)' +
-          '<b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteSite(' + n + ')">&times;</b></span>';
+      // Manage pills
+      var sp = '';
+      for (var m = 0; m < data.staff.length; m++) {
+        sp += '<span class="pill">' + data.staff[m].name + ' (₹' + data.staff[m].wage + ') <b style="color:red;cursor:pointer" onclick="delStaff(' + m + ')">✕</b></span>';
       }
-      var stEl = document.getElementById('siteListPills');
-      if (stEl) stEl.innerHTML = sitePills;
-
-      var recentLogs = document.getElementById('recentLogs');
-      if (recentLogs) {
-        var r = db.logs.slice(-5).reverse();
-        if (r.length === 0) {
-          recentLogs.innerHTML = '<p style="color:#888;">No entries recorded yet.</p>';
-        } else {
-          var logsHtml = '';
-          for (var p = 0; p < r.length; p++) {
-            var l = r[p];
-            logsHtml += '<div style="padding:6px 0; border-bottom:1px solid #eee;">' +
-              '<b>' + l.date + '</b>: ' + l.staff + ' @ ' + l.site + ' (' + l.shift + ' shift)' +
-              (Number(l.advance) > 0 ? '<span style="color:#dc2626; font-weight:bold; margin-left:4px;">Adv ₹' + l.advance + '</span>' : '') +
-            '</div>';
-          }
-          recentLogs.innerHTML = logsHtml;
-        }
+      document.getElementById('pillsStaff').innerHTML = sp;
+      var st = '';
+      for (var n = 0; n < data.sites.length; n++) {
+        st += '<span class="pill">' + data.sites[n].name + ' (₹' + data.sites[n].rate + ') <b style="color:red;cursor:pointer" onclick="delSite(' + n + ')">✕</b></span>';
       }
+      document.getElementById('pillsSites').innerHTML = st;
 
-      var cloudUrlEl = document.getElementById('cloudUrlInput');
-      if (cloudUrlEl) cloudUrlEl.value = db.cloudUrl || '';
-      var statusEl = document.getElementById('cloudSyncStatus');
-      if (statusEl) statusEl.textContent = db.cloudUrl ? '✅ Connected to Google Sheets' : '⚠️ Cloud sync link not set';
+      // Recent logs
+      var r = data.logs.slice(-5).reverse();
+      var lHtml = '';
+      for (var x = 0; x < r.length; x++) {
+        lHtml += '<div style="padding:4px 0; border-bottom:1px solid #eee;">' +
+          '<b>' + r[x].date + '</b> - ' + r[x].staff + ' @ ' + r[x].site + ' (' + r[x].shift + ' shift)' +
+          (Number(r[x].adv) > 0 ? ' <span style="color:red; font-weight:bold;">Adv: ₹' + r[x].adv + '</span>' : '') +
+        '</div>';
+      }
+      document.getElementById('logList').innerHTML = lHtml || '<p style="color:#999;">No logs yet.</p>';
+      document.getElementById('sheetUrl').value = data.url || '';
     }
 
-    function selectAllStaff(val) {
-      var cbs = document.querySelectorAll('.staff-cb');
-      for (var i = 0; i < cbs.length; i++) cbs[i].checked = val;
-    }
-
-    function saveCloudUrl() {
-      db.cloudUrl = document.getElementById('cloudUrlInput').value.trim();
-      saveDb();
-      alert("Google Sheets Link Saved!");
-    }
-
-    function saveAttendance() {
-      var date = document.getElementById('workDate').value;
-      var site = document.getElementById('workSite').value;
-      var note = document.getElementById('workNote').value.trim();
-
-      if (!site || site === 'No sites added') {
-        alert("Please add a client site first.");
-        return;
-      }
-
+    function saveData() {
+      var dt = document.getElementById('inDate').value;
+      var site = document.getElementById('inSite').value;
+      var note = document.getElementById('inNote').value.trim();
       var batch = [];
-      for (var i = 0; i < db.staff.length; i++) {
-        var cb = document.getElementById('chkStaff_' + i);
-        if (cb && cb.checked) {
-          var shift = parseFloat(document.getElementById('shiftStaff_' + i).value) || 1;
-          var advance = parseFloat(document.getElementById('advStaff_' + i).value) || 0;
-          var entry = { date: date, staff: db.staff[i].name, site: site, shift: shift, advance: advance, note: note };
-          db.logs.push(entry);
+
+      for (var i = 0; i < data.staff.length; i++) {
+        var chk = document.getElementById('w_chk_' + i);
+        if (chk && chk.checked) {
+          var shift = parseFloat(document.getElementById('w_shift_' + i).value) || 1;
+          var adv = parseFloat(document.getElementById('w_adv_' + i).value) || 0;
+          var entry = { date: dt, staff: data.staff[i].name, site: site, shift: shift, adv: adv, note: note };
+          data.logs.push(entry);
           batch.push(entry);
-          cb.checked = false;
-          document.getElementById('advStaff_' + i).value = '';
+          chk.checked = false;
+          document.getElementById('w_adv_' + i).value = '';
         }
       }
 
       if (batch.length === 0) {
-        alert("Please select at least one worker present.");
+        alert("Please tick at least one worker present.");
         return;
       }
 
-      document.getElementById('workNote').value = '';
-      saveDb();
+      document.getElementById('inNote').value = '';
+      persist();
 
-      if (db.cloudUrl) {
-        fetch(db.cloudUrl, {
+      if (data.url) {
+        fetch(data.url, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ entries: batch })
-        }).catch(function(e) {});
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({entries: batch})
+        }).catch(function(){});
       }
 
       alert("Saved attendance for " + batch.length + " staff!");
     }
 
-    function addStaff() {
-      var name = document.getElementById('addWorkerName').value.trim();
-      var wage = Number(document.getElementById('addWorkerWage').value) || 0;
+    function addWorker() {
+      var name = document.getElementById('newWorker').value.trim();
+      var wage = Number(document.getElementById('newWage').value) || 0;
       if (!name) return;
-      db.staff.push({ name: name, wage: wage });
-      document.getElementById('addWorkerName').value = '';
-      document.getElementById('addWorkerWage').value = '';
-      saveDb();
+      data.staff.push({name: name, wage: wage});
+      document.getElementById('newWorker').value = '';
+      document.getElementById('newWage').value = '';
+      persist();
     }
 
-    function deleteStaff(idx) {
-      db.staff.splice(idx, 1);
-      saveDb();
-    }
+    function delStaff(i) { data.staff.splice(i, 1); persist(); }
 
     function addSite() {
-      var name = document.getElementById('addSiteName').value.trim();
-      var rate = Number(document.getElementById('addSiteRate').value) || 0;
+      var name = document.getElementById('newSite').value.trim();
+      var rate = Number(document.getElementById('newRate').value) || 0;
       if (!name) return;
-      db.sites.push({ name: name, rate: rate });
-      document.getElementById('addSiteName').value = '';
-      document.getElementById('addSiteRate').value = '';
-      saveDb();
+      data.sites.push({name: name, rate: rate});
+      document.getElementById('newSite').value = '';
+      document.getElementById('newRate').value = '';
+      persist();
     }
 
-    function deleteSite(idx) {
-      db.sites.splice(idx, 1);
-      saveDb();
+    function delSite(i) { data.sites.splice(i, 1); persist(); }
+
+    function saveUrl() {
+      data.url = document.getElementById('sheetUrl').value.trim();
+      persist();
+      alert("Google URL Saved!");
     }
 
-    var clientReport = null;
-    function calculateClientBill() {
+    var lastBill = null;
+    function makeBill() {
       var site = document.getElementById('billSite').value;
       var from = document.getElementById('billFrom').value;
       var to = document.getElementById('billTo').value;
+      if (!site  !from  !to) { alert("Select site and dates."); return; }
 
-      if (!site  !from  !to) {
-        alert("Select site and both dates.");
-        return;
+      var rate = 0;
+      for (var s = 0; s < data.sites.length; s++) {
+        if (data.sites[s].name === site) rate = data.sites[s].rate;
       }
 
-      var shiftRate = 0;
-      for (var s = 0; s < db.sites.length; s++) {
-        if (db.sites[s].name === site) shiftRate = db.sites[s].rate;
-      }
-
-      var dateMap = {};
-      for (var i = 0; i < db.logs.length; i++) {
-        var l = db.logs[i];
+      var map = {};
+      for (var i = 0; i < data.logs.length; i++) {
+        var l = data.logs[i];
         if (l.site === site && l.date >= from && l.date <= to) {
-          if (!dateMap[l.date]) dateMap[l.date] = [];
-          dateMap[l.date].push(l);
+          if (!map[l.date]) map[l.date] = [];
+          map[l.date].push(l);
         }
       }
-
       var totalShifts = 0;
-      var rowsHtml = '';
-      var dates = Object.keys(dateMap).sort();
+      var h = '';
+      var dates = Object.keys(map).sort();
       for (var d = 0; d < dates.length; d++) {
         var dt = dates[d];
-        var workers = dateMap[dt];
-        var dayShifts = 0;
-        var names = [];
-        for (var w = 0; w < workers.length; w++) {
-          dayShifts += workers[w].shift;
-          names.push(workers[w].staff);
-        }
-        totalShifts += dayShifts;
-        rowsHtml += '<tr><td>' + dt + '</td><td><b>' + workers.length + ' workers</b> (' + dayShifts + ' shift)</td><td>' + names.join(', ') + '</td></tr>';
+        var arr = map[dt];
+        var ds = 0; var names = [];
+        for (var k = 0; k < arr.length; k++) { ds += arr[k].shift; names.push(arr[k].staff); }
+        totalShifts += ds;
+        h += '<tr><td>' + dt + '</td><td>' + ds + '</td><td>' + names.join(', ') + '</td></tr>';
       }
 
-      var totalPayment = totalShifts * shiftRate;
-      clientReport = { site: site, from: from, to: to, totalShifts: totalShifts, totalPayment: totalPayment, dateMap: dateMap };
+      var totalDue = totalShifts * rate;
+      lastBill = { site: site, from: from, to: to, totalShifts: totalShifts, totalDue: totalDue, map: map };
 
-      document.getElementById('lblClientSite').textContent = site;
-      document.getElementById('lblClientPeriod').textContent = from + ' to ' + to;
-      document.getElementById('tblClientBody').innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
-      document.getElementById('lblTotalShifts').textContent = totalShifts;
-      document.getElementById('lblClientTotal').textContent = totalPayment.toLocaleString('en-IN');
-      document.getElementById('clientResultBox').className = 'card';
+      document.getElementById('bSiteHead').textContent = site;
+      document.getElementById('bPeriod').textContent = from + ' to ' + to;
+      document.getElementById('bRows').innerHTML = h || '<tr><td colspan="3">No records found.</td></tr>';
+      document.getElementById('bTotalShifts').textContent = totalShifts;
+      document.getElementById('bTotalDue').textContent = totalDue.toLocaleString('en-IN');
+      document.getElementById('billBox').className = 'card';
     }
 
-    function whatsappClientBill() {
-      if (!clientReport) return;
-      var msg = "*SEMA FURNITURE - SITE STATEMENT*\nSite: *" + clientReport.site + "*\nPeriod: " + clientReport.from + " to " + clientReport.to + "\n\n*Date-Wise Attendance:*\n";
-      var dates = Object.keys(clientReport.dateMap).sort();
-      for (var i = 0; i < dates.length; i++) {
-        var dt = dates[i];
-        var w = clientReport.dateMap[dt];
-        var staffNames = [];
-        for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
-        msg += "• " + dt + ": " + w.length + " staff (" + staffNames.join(', ') + ")\n";
+    function sendBillWhatsApp() {
+      if (!lastBill) return;
+      var msg = "*SEMA FURNITURE - STATEMENT*\nSite: *" + lastBill.site + "*\nPeriod: " + lastBill.from + " to " + lastBill.to + "\n\n";
+      var dts = Object.keys(lastBill.map).sort();
+      for (var i = 0; i < dts.length; i++) {
+        var dt = dts[i];
+        var arr = lastBill.map[dt];
+        msg += "• " + dt + ": " + arr.length + " staff\n";
       }
-      msg += "\nTotal Shifts: *" + clientReport.totalShifts + "*\n*Total Due: ₹" + clientReport.totalPayment.toLocaleString('en-IN') + "*";
+      msg += "\nTotal Shifts: *" + lastBill.totalShifts + "*\n*Total Due: ₹" + lastBill.totalDue.toLocaleString('en-IN') + "*";
       window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
     }
 
-    function calculateStaffKhata() {
-      var staff = document.getElementById('khataStaff').value;
-      var from = document.getElementById('khataFrom').value;
-      var to = document.getElementById('khataTo').value;
-
-      if (!staff  !from  !to) {
-        alert("Select staff and both dates.");
-        return;
-      }
+    function makeKhata() {
+      var staff = document.getElementById('kStaff').value;
+      var from = document.getElementById('kFrom').value;
+      var to = document.getElementById('kTo').value;
+      if (!staff  !from  !to) { alert("Select staff and dates."); return; }
 
       var wage = 0;
-      for (var s = 0; s < db.staff.length; s++) {
-        if (db.staff[s].name === staff) wage = db.staff[s].wage;
+      for (var s = 0; s < data.staff.length; s++) {
+        if (data.staff[s].name === staff) wage = data.staff[s].wage;
       }
 
-      var totalDays = 0;
-      var totalAdv = 0;
-      var advHtml = '';
-
-      for (var i = 0; i < db.logs.length; i++) {
-        var l = db.logs[i];
+      var days = 0; var adv = 0; var h = '';
+      for (var i = 0; i < data.logs.length; i++) {
+        var l = data.logs[i];
         if (l.staff === staff && l.date >= from && l.date <= to) {
-          totalDays += l.shift;
-          if (Number(l.advance) > 0) {
-            totalAdv += Number(l.advance);
-            advHtml += '<tr><td>' + l.date + '</td><td>' + l.site + '</td><td style="color:#dc2626; font-weight:bold;">₹' + l.advance + '</td></tr>';
+          days += l.shift;
+          if (Number(l.adv) > 0) {
+            adv += Number(l.adv);
+            h += '<tr><td>' + l.date + '</td><td>' + l.site + '</td><td style="color:red;font-weight:bold;">₹' + l.adv + '</td></tr>';
           }
         }
       }
 
-      var gross = totalDays * wage;
-      var net = gross - totalAdv;
+      var gross = days * wage;
+      var net = gross - adv;
 
-      document.getElementById('lblWorkerName').textContent = staff + " (₹" + wage + "/day)";
-      document.getElementById('lblKhataPeriod').textContent = from + ' to ' + to;
-      document.getElementById('lblDaysWorked').textContent = totalDays;
-      document.getElementById('lblGrossEarned').textContent = gross.toLocaleString('en-IN');
-      document.getElementById('lblTotalAdvances').textContent = totalAdv.toLocaleString('en-IN');
-      document.getElementById('lblNetPayable').textContent = net.toLocaleString('en-IN');
-      document.getElementById('tblAdvancesBody').innerHTML = advHtml || '<tr><td colspan="3" style="color:#888;">No advances taken.</td></tr>';
-      document.getElementById('khataResultBox').className = 'card';
+      document.getElementById('kNameHead').textContent = staff + " (₹" + wage + "/day)";
+      document.getElementById('kPeriod').textContent = from + ' to ' + to;
+      document.getElementById('kDays').textContent = days;
+      document.getElementById('kGross').textContent = gross.toLocaleString('en-IN');
+      document.getElementById('kAdv').textContent = adv.toLocaleString('en-IN');
+      document.getElementById('kNet').textContent = net.toLocaleString('en-IN');
+      document.getElementById('kRows').innerHTML = h || '<tr><td colspan="3">No advances.</td></tr>';
+      document.getElementById('khataBox').className = 'card';
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', renderAll);
-    } else {
-      renderAll();
-    }
+    // Run automatically
+    refresh();
   </script>
 </body>
 </html>
