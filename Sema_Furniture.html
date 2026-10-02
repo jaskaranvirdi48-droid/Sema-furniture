@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sema Furniture - Staff Attendance & Site Billing Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    @media print {
+      body * { visibility: hidden !important; }
+      #printableArea, #printableArea * { visibility: visible !important; }
+      #printableArea {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
+    .tab-active {
+      background-color: #451a03 !important;
+      color: #fef3c7 !important;
+      font-weight: 700 !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen pb-16 font-sans antialiased">
+
+  <header class="bg-amber-950 text-white p-4 shadow-md sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center space-x-2.5">
+        <span class="text-2xl">🪵</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg md:text-xl font-black tracking-wide text-amber-100 uppercase">SEMA FURNITURE</h1>
+            <span class="bg-amber-800 text-amber-200 text-[11px] px-2 py-0.5 rounded font-bold border border-amber-700">Prop: Sewak Singh</span>
+          </div>
+          <p class="text-xs text-amber-300/80 mt-0.5">Staff Attendance, Advances & 15-Day Site Billing</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 text-xs">
+        <button onclick="exportMonthlyCSV()" class="bg-amber-900 hover:bg-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
+          📊 Monthly CSV
+        </button>
+        <button onclick="exportBackupJSON()" class="bg-stone-900 hover:bg-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
+          💾 Backup
+        </button>
+        <button onclick="document.getElementById('importFile').click()" class="bg-stone-900 hover:bg-black px-2.5 py-1.5 rounded-lg transition">
+          📂 Restore
+        </button>
+        <input type="file" id="importFile" class="hidden" onchange="importBackupJSON(event)" accept=".json" />
+      </div>
+    </div>
+  </header>
+
+  <nav class="max-w-4xl mx-auto px-4 mt-3">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-1.5 bg-stone-200/90 p-1.5 rounded-xl shadow-inner text-xs font-semibold">
+      <button type="button" onclick="showTab('daily')" id="tabBtn-daily" class="tab-active py-2.5 px-2 rounded-lg text-center transition">
+        📋 Daily Entry
+      </button>
+      <button type="button" onclick="showTab('billing')" id="tabBtn-billing" class="bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition">
+        📄 Client 15-Day Bill
+      </button>
+      <button type="button" onclick="showTab('khata')" id="tabBtn-khata" class="bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition">
+        👷 Staff Closing Khata
+      </button>
+      <button type="button" onclick="showTab('manage')" id="tabBtn-manage" class="bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition">
+        ⚙️ Manage Staff & Sites
+      </button>
+    </div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto px-4 mt-4 space-y-5">
+
+    <section id="section-daily" class="space-y-4">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 space-y-4">
+        <h2 class="font-bold text-stone-800 text-sm md:text-base flex items-center gap-2">
+          <span>📅</span> Mark Daily Site Attendance & Advances
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">Work Date</label>
+            <input type="date" id="workDate" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">Select Client Site</label>
+            <select id="workSite" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50"></select>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="block text-xs font-bold text-stone-700">Select Workers Present at this Site:</label>
+            <div class="space-x-2 text-xs">
+              <button type="button" onclick="toggleAllStaff(true)" class="text-amber-950 font-bold underline">Select All</button>
+              <button type="button" onclick="toggleAllStaff(false)" class="text-stone-500 underline">None</button>
+            </div>
+          </div>
+          <div id="staffChecklist" class="space-y-2 border p-3 rounded-xl bg-stone-50 max-h-72 overflow-y-auto"></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-stone-600 mb-1">Work Description / Remarks (Optional)</label>
+          <input type="text" id="workNote" placeholder="e.g. Wardrobe fitting, laminate work, polishing" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+        </div>
+
+        <button type="button" onclick="saveDailyAttendance()" class="w-full bg-amber-950 hover:bg-black text-white font-bold py-3 rounded-xl text-xs md:text-sm shadow transition flex items-center justify-center gap-2">
+          💾 Save Attendance for All Selected
+        </button>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200">
+        <h3 class="font-bold text-xs text-stone-700 uppercase tracking-wider mb-2">Recent 10 Entries</h3>
+        <div id="recentLogsList" class="divide-y text-xs"></div>
+      </div>
+    </section>
+
+    <section id="section-billing" class="space-y-4 hidden">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 space-y-3.5">
+        <h2 class="font-bold text-stone-800 text-sm md:text-base flex items-center gap-2">
+          <span>📄</span> Generate 15-Day Client Site Bill
+        </h2>
+        
+        <div>
+          <label class="block text-xs font-semibold text-stone-600 mb-1">Select Client Site</label>
+          <select id="billSite" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">From Date</label>
+            <input type="date" id="billFrom" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">To Date</label>
+            <input type="date" id="billTo" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+          </div>
+        </div>
+
+        <button type="button" onclick="computeClientBill()" class="w-full bg-stone-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition">
+          🔍 Compute Site Bill & Dates
+        </button>
+      </div>
+
+      <!-- Printable Client Bill Box (No Daily Wages Shown to Client) -->
+      <div id="clientBillResult" class="hidden space-y-3">
+        <div id="printableClientArea" class="bg-white p-6 rounded-2xl border border-stone-300 shadow-sm space-y-4">
+          <div class="border-b pb-3 flex justify-between items-start">
+            <div>
+              <h2 class="text-xl font-black text-amber-950 uppercase tracking-wide">SEMA FURNITURE</h2>
+              <p class="text-xs font-bold text-amber-900">Proprietor: Sewak Singh</p>
+              <p class="text-[11px] text-stone-500">Carpentry, Modular Furniture & Interior Execution</p>
+            </div>
+            <div class="text-right">
+              <span class="bg-stone-800 text-white text-[11px] font-bold px-2.5 py-1 rounded">SITE LABOR STATEMENT</span>
+              <p class="text-[11px] text-stone-500 mt-1" id="invPeriodText"></p>
+            </div>
+          </div>
+
+          <div class="bg-stone-50 p-3 rounded-xl border text-xs">
+            <p><strong>Client Site:</strong> <span id="invSiteText" class="font-bold text-amber-950"></span></p>
+          </div>
+
+          <!-- Date-wise table -->
+          <div>
+            <h4 class="text-xs font-bold text-stone-700 uppercase mb-1">1. Date-Wise Staff Attendance Breakdown</h4>
+            <table class="w-full text-xs text-left border border-stone-200">
+              <thead class="bg-stone-100 border-b">
+                <tr>
+                  <th class="p-2 border-r">Date</th>
+                  <th class="p-2 border-r text-center">Workers Present</th>
+                  <th class="p-2">Staff Deployed</th>
+                </tr>
+              </thead>
+              <tbody id="invDateBreakdown" class="divide-y"></tbody>
+            </table>
+          </div>
+
+          <div class="border-t pt-3 flex justify-between items-center text-xs font-bold bg-amber-50 p-3 rounded-xl">
+            <span>Total Staff Shifts Deployed:</span>
+            <span id="invTotalShifts" class="text-amber-950 text-sm">0</span>
+          </div>
+
+          <div class="flex justify-between items-center text-sm font-black border-t-2 pt-2 text-stone-900">
+            <span>TOTAL PAYMENT DUE:</span>
+            <span class="text-xl text-amber-950">₹<span id="invTotalPayment">0</span></span>
+          </div>
+
+          <div class="pt-4 border-t text-[10px] text-stone-400 flex justify-between">
+            <span>Sema Furniture (Sewak Singh)</span>
+            <span>Authorized Signature</span>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" onclick="shareClientWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow">
+            💬 Send to Client on WhatsApp
+          </button>
+          <button type="button" onclick="downloadClientPDF()" class="flex-1 bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow">
+            📄 Download Client PDF
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-khata" class="space-y-4 hidden">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 space-y-3.5">
+        <h2 class="font-bold text-stone-800 text-sm md:text-base flex items-center gap-2">
+          <span>👷</span> Staff Salary & Advance Closing Slip
+        </h2>
+        
+        <div>
+          <label class="block text-xs font-semibold text-stone-600 mb-1">Select Staff Worker</label>
+          <select id="khataStaff" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">From Date</label>
+            <input type="date" id="khataFrom" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-stone-600 mb-1">To Date</label>
+            <input type="date" id="khataTo" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+          </div>
+        </div>
+
+        <button type="button" onclick="generateStaffKhata()" class="w-full bg-stone-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition">
+          📊 Calculate Worker Closing Slip
+        </button>
+      </div>
+
+      <!-- Staff Closing Result -->
+      <div id="staffKhataResult" class="hidden space-y-3">
+        <div id="printableStaffArea" class="bg-white p-6 rounded-2xl border border-stone-300 shadow-sm space-y-4 text-xs">
+          <div class="border-b pb-3 flex justify-between items-start">
+            <div>
+              <h2 class="text-lg font-black text-amber-950 uppercase">SEMA FURNITURE</h2>
+              <p class="text-xs font-bold text-amber-900">Proprietor: Sewak Singh</p>
+            </div>
+            <div class="text-right">
+              <span class="bg-amber-950 text-white text-[10px] font-bold px-2 py-0.5 rounded">STAFF PAYMENT SETTLEMENT</span>
+              <p class="text-[10px] text-stone-500 mt-1" id="khataPeriodText"></p>
+            </div>
+          </div>
+
+          <div class="bg-stone-50 p-2.5 rounded-xl border flex justify-between items-center">
+            <div>
+              <p class="text-xs"><strong>Worker Name:</strong> <span id="khataWorkerName" class="font-bold text-stone-900 text-sm"></span></p>
+              <p class="text-[11px] text-stone-500">Daily Wage Rate: ₹<span id="khataDailyRate"></span>/day</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs">Total Days Worked: <strong id="khataTotalDays">0</strong></p>
+              <p class="text-xs text-emerald-800 font-bold">Gross Earned: ₹<span id="khataGrossAmount">0</span></p>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-stone-700 uppercase tracking-wider text-[11px] mb-1">Itemized Cash Advances Taken (Deductions)</h4>
+            <table class="w-full text-left border">
+              <thead class="bg-stone-100 border-b">
+                <tr>
+                  <th class="p-1.5 border-r">Date</th>
+                  <th class="p-1.5 border-r">Site</th>
+                  <th class="p-1.5 border-r">Remarks / Reason</th>
+                  <th class="p-1.5 text-right">Advance (₹)</th>
+                </tr>
+              </thead>
+              <tbody id="khataAdvancesTable" class="divide-y"></tbody>
+            </table>
+          </div>
+
+          <div class="border-t pt-2 space-y-1">
+            <div class="flex justify-between text-xs">
+              <span>Gross Earnings:</span>
+              <span class="font-bold">₹<span id="khataSummaryGross">0</span></span>
+            </div>
+            <div class="flex justify-between text-xs text-rose-600">
+              <span>Less Total Advance Taken:</span>
+              <span class="font-bold">- ₹<span id="khataSummaryAdvance">0</span></span>
+            </div>
+            <div class="flex justify-between text-sm font-black border-t pt-1.5 text-stone-900">
+              <span>NET PAYABLE CASH BALANCE:</span>
+              <span class="text-amber-950 text-base">₹<span id="khataSummaryNet">0</span></span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t text-[10px] text-stone-400 flex justify-between">
+            <span>Worker Signature / Thumb</span>
+            <span>Sewak Singh (Owner)</span>
+          </div>
+        </div>
+
+        <button type="button" onclick="downloadStaffPDF()" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow">
+          📄 Download Worker Closing Slip (PDF)
+        </button>
+      </div>
+    </section>
+
+    <section id="section-manage" class="space-y-4 hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Add Staff -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-2">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-stone-700">Add Staff Member</h3>
+          <input type="text" id="newStaffName" placeholder="Worker Name (e.g. Ramesh Carpenter)" class="w-full border rounded-xl p-2 text-xs" />
+          <input type="number" id="newStaffWage" placeholder="Daily Wage in ₹ (e.g. 900)" class="w-full border rounded-xl p-2 text-xs" />
+          <button type="button" onclick="addStaff()" class="w-full bg-amber-950 hover:bg-black text-white py-2 rounded-xl text-xs font-bold">Add Worker</button>
+          <div id="manageStaffPills" class="flex flex-wrap gap-1 pt-2"></div>
+        </div>
+
+        <!-- Add Site -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-2">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-stone-700">Add Client Site</h3>
+          <input type="text" id="newSiteName" placeholder="Client Site Name (e.g. Sharma Villa)" class="w-full border rounded-xl p-2 text-xs" />
+          <input type="number" id="newSiteRate" placeholder="Agreed Shift Billing Charge (e.g. 1200)" class="w-full border rounded-xl p-2 text-xs" />
+          <button type="button" onclick="addSite()" class="w-full bg-amber-950 hover:bg-black text-white py-2 rounded-xl text-xs font-bold">Save Client Site</button>
+          <div id="manageSitesList" class="space-y-1 pt-2"></div>
+        </div>
+      </div>
+
+      <!-- GOOGLE SHEETS CLOUD SYNC SECTION -->
+      <div class="bg-emerald-50 border-2 border-emerald-300 p-4 rounded-2xl shadow-sm space-y-2">
+        <div class="flex items-center gap-2 text-emerald-950 font-bold text-sm">
+          <span>☁️</span>
+          <h3>Google Sheets Cloud Database (Free & Permanent)</h3>
+        </div>
+        <p class="text-xs text-emerald-800">
+          Paste your Google Apps Script Web App URL below. When saved, every attendance entry automatically syncs directly to your Google Sheet so you never lose old data!
+        </p>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input type="url" id="googleCloudUrl" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 border border-emerald-300 rounded-xl p-2 text-xs bg-white" />
+          <button type="button" onclick="saveCloudUrl()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-4 py-2 rounded-xl text-xs font-bold shadow whitespace-nowrap">
+            Save Cloud URL
+          </button>
+        </div>
+        <p id="cloudStatusMsg" class="text-[11px] font-semibold text-emerald-700"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Primary Data Storage
+    let appData = {
+      cloudUrl: '',
+      staff: [
+        { name: 'Ramesh Carpenter', wage: 900 },
+        { name: 'Sunil Helper', wage: 600 },
+        { name: 'Amit Polisher', wage: 850 }
+      ],
+      sites: [
+        { name: 'Sharma Villa Interior', rate: 1200 },
+        { name: 'DLF Flat 402 Work', rate: 1200 }
+      ],
+      logs: []
+    };
+
+    // Load stored data safely
+    try {
+      const stored = localStorage.getItem('semaFurnitureData');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object') {
+          appData = Object.assign(appData, parsed);
+        }
+      }
+    } catch (e) {
+      console.warn("Storage load warning:", e);
+    }
+
+    function persist() {
+      try {
+        localStorage.setItem('semaFurnitureData', JSON.stringify(appData));
+      } catch (e) {
+        console.warn("Storage save warning:", e);
+      }
+      render();
+    }
+
+    function showTab(tabId) {
+      const tabs = ['daily', 'billing', 'khata', 'manage'];
+      tabs.forEach(t => {
+        const sec = document.getElementById('section-' + t);
+        const btn = document.getElementById('tabBtn-' + t);
+        if (sec) {
+          if (t === tabId) {
+            sec.classList.remove('hidden');
+          } else {
+            sec.classList.add('hidden');
+          }
+        }
+        if (btn) {
+          if (t === tabId) {
+            btn.className = "tab-active py-2.5 px-2 rounded-lg text-center transition";
+          } else {
+            btn.className = "bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition";
+          }
+        }
+      });
+    }
+
+    function render() {
+      // 1. Populate Site dropdowns
+      const siteOpts = appData.sites.map(s => '<option value="' + escapeHtml(s.name) + '">' + escapeHtml(s.name) + '</option>').join('');
+      const workSiteElem = document.getElementById('workSite');
+      const billSiteElem = document.getElementById('billSite');
+      if (workSiteElem) workSiteElem.innerHTML = siteOpts || '<option value="">No sites added yet</option>';
+      if (billSiteElem) billSiteElem.innerHTML = siteOpts || '<option value="">No sites added yet</option>';
+
+      // 2. Staff dropdown for Khata
+      const khataStaffElem = document.getElementById('khataStaff');
+      if (khataStaffElem) {
+        khataStaffElem.innerHTML = appData.staff.map(s => '<option value="' + escapeHtml(s.name) + '">' + escapeHtml(s.name) + '</option>').join('');
+      }
+
+      // 3. Multi-staff checklist for daily entry
+      const checklist = document.getElementById('staffChecklist');
+      if (checklist) {
+        if (appData.staff.length === 0) {
+          checklist.innerHTML = '<p class="text-xs text-stone-400 italic">No workers added yet. Go to "Manage Staff & Sites" to add workers.</p>';
+        } else {
+          checklist.innerHTML = appData.staff.map((s, idx) => 
+            '<div class="flex items-center justify-between bg-white p-2 rounded-lg border border-stone-200">' +
+              '<label class="flex items-center gap-2 cursor-pointer flex-1">' +
+                '<input type="checkbox" id="chkStaff_' + idx + '" value="' + escapeHtml(s.name) + '" class="staff-check w-4 h-4 text-amber-950 accent-amber-950 rounded" />' +
+                '<span class="text-xs font-bold text-stone-800">' + escapeHtml(s.name) + '</span>' +
+              '</label>' +
+              '<div class="flex items-center gap-1.5">' +
+                '<select id="shiftStaff_' + idx + '" class="text-xs border rounded p-1 bg-stone-50">' +
+                  '<option value="1">1 Day</option>' +
+                  '<option value="0.5">½ Day</option>' +
+                  '<option value="1.5">1.5 OT</option>' +
+                '</select>' +
+                '<input type="number" id="advStaff_' + idx + '" placeholder="Adv ₹" class="w-16 text-xs border rounded p-1 text-rose-600 font-bold" />' +
+              '</div>' +
+            '</div>'
+          ).join('');
+        }
+      }
+
+      // 4. Staff pills in Manage
+      const staffPills = document.getElementById('manageStaffPills');
+      if (staffPills) {
+        staffPills.innerHTML = appData.staff.map((s, idx) => 
+          '<span class="bg-stone-100 text-stone-700 px-2 py-1 rounded-lg text-xs border flex items-center gap-1">' +
+            escapeHtml(s.name) + ' (₹' + s.wage + '/d) <button type="button" onclick="removeStaff(' + idx + ')" class="text-rose-500 font-bold ml-1">&times;</button>' +
+          '</span>'
+        ).join('');
+      }
+
+      // 5. Sites list in Manage
+      const sitesList = document.getElementById('manageSitesList');
+      if (sitesList) {
+        sitesList.innerHTML = appData.sites.map((s, idx) => 
+          '<div class="flex justify-between items-center text-xs bg-stone-50 p-2 rounded-lg border">' +
+            '<span><strong>' + escapeHtml(s.name) + '</strong></span>' +
+            '<button type="button" onclick="removeSite(' + idx + ')" class="text-rose-500 font-semibold">Delete</button>' +
+          '</div>'
+        ).join('');
+      }
+
+      // 6. Recent Logs
+      const logsElem = document.getElementById('recentLogsList');
+      if (logsElem) {
+        const logsRev = [...appData.logs].reverse().slice(0, 10);
+        logsElem.innerHTML = logsRev.length ? logsRev.map((l, idx) => 
+          '<div class="py-2 flex justify-between items-center">' +
+            '<div>' +
+              '<strong class="text-stone-800">' + escapeHtml(l.date) + '</strong> - ' + escapeHtml(l.staff) + ' @ ' + escapeHtml(l.site) + ' (' + l.shift + ' shift)' +
+              (Number(l.advance) > 0 ? '<span class="text-rose-600 font-bold ml-1">Advance: ₹' + l.advance + '</span>' : '') +
+            '</div>' +
+            '<button type="button" onclick="deleteLog(' + (appData.logs.length - 1 - idx) + ')" class="text-rose-400 hover:text-rose-600 font-bold">✕</button>' +
+          '</div>'
+        ).join('') : '<p class="text-stone-400 italic py-2">No entries logged yet.</p>';
+      }
+
+      // 7. Google Cloud URL
+      const urlInput = document.getElementById('googleCloudUrl');
+      if (urlInput) urlInput.value = appData.cloudUrl || '';
+      const statusMsg = document.getElementById('cloudStatusMsg');
+      if (statusMsg) {
+        statusMsg.textContent = appData.cloudUrl 
+          ? "✅ Cloud sync active. Entries automatically save to Google Sheets." 
+          : "⚠️ Paste your Google Sheets Web App URL above for permanent cloud backup.";
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    function toggleAllStaff(state) {
+      document.querySelectorAll('.staff-check').forEach(cb => cb.checked = state);
+    }
+
+    function saveCloudUrl() {
+      const url = document.getElementById('googleCloudUrl').value.trim();
+      appData.cloudUrl = url;
+      persist();
+      alert("Google Sheets URL saved successfully!");
+    }
+
+    function syncToGoogleSheets(batch) {
+      if (!appData.cloudUrl) return;
+      fetch(appData.cloudUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entries: batch })
+      }).catch(err => console.log('Sync error:', err));
+    }
+
+    function saveDailyAttendance() {
+      const date = document.getElementById('workDate').value;
+      const site = document.getElementById('workSite').value;
+      const note = document.getElementById('workNote').value.trim();
+
+      if (!site || site === 'No sites added yet') {
+        alert("Please add and select a client site first.");
+        return;
+      }
+
+      const newBatch = [];
+      appData.staff.forEach((s, idx) => {
+        const cb = document.getElementById('chkStaff_' + idx);
+        if (cb && cb.checked) {
+          const shift = parseFloat(document.getElementById('shiftStaff_' + idx).value) || 1;
+          const advance = parseFloat(document.getElementById('advStaff_' + idx).value) || 0;
+
+          const entry = { date, staff: s.name, site, shift, advance, note };
+          appData.logs.push(entry);
+          newBatch.push(entry);
+
+          cb.checked = false;
+          const advInput = document.getElementById('advStaff_' + idx);
+          if (advInput) advInput.value = '';
+        }
+      });
+
+      if (newBatch.length === 0) {
+        alert("Please select at least one worker present.");
+        return;
+      }
+
+      document.getElementById('workNote').value = '';
+      persist();
+      syncToGoogleSheets(newBatch);
+      alert("Saved attendance for " + newBatch.length + " workers at Sema Furniture!");
+    }
+
+    function deleteLog(idx) {
+      if (confirm("Delete this entry?")) {
+        appData.logs.splice(idx, 1);
+        persist();
+      }
+    }
+
+    function addStaff() {
+      const name = document.getElementById('newStaffName').value.trim();
+      const wage = Number(document.getElementById('newStaffWage').value) || 0;
+      if (!name) return;
+      appData.staff.push({ name, wage });
+      document.getElementById('newStaffName').value = '';
+      document.getElementById('newStaffWage').value = '';
+      persist();
+    }
+
+    function removeStaff(idx) {
+      appData.staff.splice(idx, 1);
+      persist();
+    }
+
+    function addSite() {
+      const name = document.getElementById('newSiteName').value.trim();
+      const rate = Number(document.getElementById('newSiteRate').value) || 0;
+      if (!name) return;
+      appData.sites.push({ name, rate });
+      document.getElementById('newSiteName').value = '';
+      document.getElementById('newSiteRate').value = '';
+      persist();
+    }
+
+    function removeSite(idx) {
+      appData.sites.splice(idx, 1);
+      persist();
+    }
+
+    let activeClientInvoice = null;
+
+    function computeClientBill() {
+      const site = document.getElementById('billSite').value;
+      const from = document.getElementById('billFrom').value;
+      const to = document.getElementById('billTo').value;
+
+      if (!site || !from || !to) {
+        alert("Please select site and date range.");
+        return;
+      }
+
+      const siteObj = appData.sites.find(s => s.name === site);
+      const shiftRate = siteObj ? siteObj.rate : 0;
+      const matching = appData.logs.filter(l => l.site === site && l.date >= from && l.date <= to);
+
+      const dateMap = {};
+      matching.forEach(entry => {
+        if (!dateMap[entry.date]) dateMap[entry.date] = [];
+        dateMap[entry.date].push(entry);
+      });
+
+      const datesList = Object.keys(dateMap).sort();
+      let totalShifts = 0;
+
+      const breakdownRows = datesList.map(dt => {
+        const workers = dateMap[dt];
+        const dayShifts = workers.reduce((sum, w) => sum + w.shift, 0);
+        totalShifts += dayShifts;
+        const names = workers.map(w => escapeHtml(w.staff)).join(', ');
+        return '<tr class="border-b">' +
+          '<td class="p-2 border-r font-semibold">' + dt + '</td>' +
+          '<td class="p-2 border-r font-bold text-center text-amber-950">' + workers.length + ' workers (' + dayShifts + ' shift)</td>' +
+          '<td class="p-2 text-stone-600">' + names + '</td>' +
+        '</tr>';
+      }).join('');
+
+      const totalPayment = totalShifts * shiftRate;
+      activeClientInvoice = { site, from, to, totalShifts, totalPayment, dateMap, datesList };
+
+      document.getElementById('invPeriodText').textContent = from + ' to ' + to;
+      document.getElementById('invSiteText').textContent = site;
+      document.getElementById('invDateBreakdown').innerHTML = breakdownRows || '<tr><td colspan="3" class="p-2 text-center text-stone-400">No shifts recorded in this date range.</td></tr>';
+      document.getElementById('invTotalShifts').textContent = totalShifts;
+      document.getElementById('invTotalPayment').textContent = totalPayment.toLocaleString('en-IN');
+
+      document.getElementById('clientBillResult').classList.remove('hidden');
+    }
+
+    function shareClientWhatsApp() {
+      if (!activeClientInvoice) return;
+      let breakdownMsg = "";
+      activeClientInvoice.datesList.forEach(dt => {
+        const workers = activeClientInvoice.dateMap[dt];
+        breakdownMsg += "• " + dt + ": *" + workers.length + " workers* (" + workers.map(w => w.staff).join(', ') + ")\n";
+      });
+
+      const msg = "*SEMA FURNITURE - SITE STATEMENT*\n*Proprietor: Sewak Singh*\nSite: *" + activeClientInvoice.site + "*\nPeriod: " + activeClientInvoice.from + " to " + activeClientInvoice.to + "\n\n*Date-Wise Attendance:*\n" + breakdownMsg + "--------------------\nTotal Shifts Deployed: *" + activeClientInvoice.totalShifts + "*\n*Total Payment Due: ₹" + activeClientInvoice.totalPayment.toLocaleString('en-IN') + "*\n\nThank you!";
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    function downloadClientPDF() {
+      const element = document.getElementById('printableClientArea');
+      if (typeof html2pdf !== 'undefined') {
+        html2pdf().set({
+          margin: 10,
+          filename: 'Sema_Furniture_Bill_' + activeClientInvoice.site + '_' + activeClientInvoice.from + '.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save();
+      } else {
+        window.print();
+      }
+    }
+
+    let activeStaffKhata = null;
+
+    function generateStaffKhata() {
+      const staffName = document.getElementById('khataStaff').value;
+      const from = document.getElementById('khataFrom').value;
+      const to = document.getElementById('khataTo').value;
+
+      if (!staffName || !from || !to) {
+        alert("Please select staff and date range.");
+        return;
+      }
+
+      const staffObj = appData.staff.find(s => s.name === staffName);
+      const wage = staffObj ? staffObj.wage : 0;
+
+      const matching = appData.logs.filter(l => l.staff === staffName && l.date >= from && l.date <= to);
+      const totalDays = matching.reduce((sum, item) => sum + item.shift, 0);
+      const grossAmount = totalDays * wage;
+
+      const advanceEntries = matching.filter(item => Number(item.advance) > 0);
+      const totalAdvance = advanceEntries.reduce((sum, item) => sum + Number(item.advance), 0);
+      const netPayable = grossAmount - totalAdvance;
+
+      activeStaffKhata = { staffName, wage, from, to, totalDays, grossAmount, totalAdvance, netPayable };
+
+      document.getElementById('khataPeriodText').textContent = from + ' to ' + to;
+      document.getElementById('khataWorkerName').textContent = staffName;
+      document.getElementById('khataDailyRate').textContent = wage;
+      document.getElementById('khataTotalDays').textContent = totalDays;
+      document.getElementById('khataGrossAmount').textContent = grossAmount.toLocaleString('en-IN');
+
+      document.getElementById('khataAdvancesTable').innerHTML = advanceEntries.length ? advanceEntries.map(a => 
+        '<tr class="border-b">' +
+          '<td class="p-1.5 border-r font-semibold">' + escapeHtml(a.date) + '</td>' +
+          '<td class="p-1.5 border-r">' + escapeHtml(a.site) + '</td>' +
+          '<td class="p-1.5 border-r text-stone-500">' + escapeHtml(a.note || '-') + '</td>' +
+          '<td class="p-1.5 text-right font-bold text-rose-600">₹' + a.advance + '</td>' +
+        '</tr>'
+      ).join('') : '<tr><td colspan="4" class="p-2 text-center text-stone-400">No cash advances taken during this period.</td></tr>';
+
+      document.getElementById('khataSummaryGross').textContent = grossAmount.toLocaleString('en-IN');
+      document.getElementById('khataSummaryAdvance').textContent = totalAdvance.toLocaleString('en-IN');
+      document.getElementById('khataSummaryNet').textContent = netPayable.toLocaleString('en-IN');
+
+      document.getElementById('staffKhataResult').classList.remove('hidden');
+    }
+
+    function downloadStaffPDF() {
+      const element = document.getElementById('printableStaffArea');
+      if (typeof html2pdf !== 'undefined') {
+        html2pdf().set({
+          margin: 10,
+          filename: 'Staff_Closing_' + activeStaffKhata.staffName + '_' + activeStaffKhata.from + '.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save();
+      } else {
+        window.print();
+      }
+    }
+
+    function exportMonthlyCSV() {
+      const monthInput = prompt("Enter Year-Month (e.g. 2026-10):", new Date().toISOString().slice(0, 7));
+      if (!monthInput) return;
+
+      const monthlyLogs = appData.logs.filter(l => l.date && l.date.startsWith(monthInput));
+      if (monthlyLogs.length === 0) {
+        alert("No entries found for " + monthInput);
+        return;
+      }
+
+      let csv = "Date,Staff Name,Site Name,Shift,Advance (INR),Remarks\n";
+      monthlyLogs.forEach(r => {
+        csv += '"' + r.date + '","' + r.staff + '","' + r.site + '",' + r.shift + ',' + (r.advance || 0) + ',"' + ((r.note || '').replace(/"/g, '""')) + '"\n';
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = 'Sema_Furniture_Report_' + monthInput + '.csv';
+      link.click();
+    }
+
+    function exportBackupJSON() {
+      const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Sema_Furniture_Backup_' + new Date().toISOString().split('T')[0] + '.json';
+      a.click();
+    }
+
+    function importBackupJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          appData = JSON.parse(evt.target.result);
+          persist();
+          alert("Backup data restored successfully!");
+        } catch(err) {
+          alert("Invalid backup file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    window.onload = function() {
+      const today = new Date().toISOString().split('T')[0];
+      const workDateInput = document.getElementById('workDate');
+      const billFromInput = document.getElementById('billFrom');
+      const billToInput = document.getElementById('billTo');
+      const khataFromInput = document.getElementById('khataFrom');
+      const khataToInput = document.getElementById('khataTo');
+
+      if (workDateInput) workDateInput.value = today;
+      if (billFromInput) billFromInput.value = today.slice(0, 8) + '01';
+      if (billToInput) billToInput.value = today;
+      if (khataFromInput) khataFromInput.value = today.slice(0, 8) + '01';
+      if (khataToInput) khataToInput.value = today;
+
+      render();
+    };
+  </script>
+</body>
+</html>
