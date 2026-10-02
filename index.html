@@ -2,158 +2,138 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sema Furniture - Staff Attendance & Site Billing Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  
+  <!-- App Appearance & PWA Settings -->
+  <title>Sema Furniture</title>
+  <meta name="theme-color" content="#78350f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Sema Furniture" />
+
+  <!-- Embedded App Icon (Saw & Woodwork) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2378350f'/%3E%3Ctext y='65' x='15' font-size='55'%3E🪵%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2378350f'/%3E%3Ctext y='65' x='15' font-size='55'%3E🪵%3C/text%3E%3C/svg%3E" />
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Sema%20Furniture%22%2C%22short_name%22%3A%22SemaApp%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f5f5f4%22%2C%22theme_color%22%3A%22%2378350f%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D\'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20100%20100\'%253E%253Crect%20width%3D\'100\'%20height%3D\'100\'%20rx%3D\'20\'%20fill%3D\'%252378350f\'%2F%253E%253Ctext%20y%3D\'65\'%20x%3D\'15\'%20font-size%3D\'55\'%253E%F0%9F%AA%B5%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @media print {
-      body * { visibility: hidden !important; }
-      #printableArea, #printableArea * { visibility: visible !important; }
-      #printableArea {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-    }
-    .tab-active {
-      background-color: #451a03 !important;
-      color: #fef3c7 !important;
-      font-weight: 700 !important;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      body * { visibility: hidden; }
+      #printableClientArea, #printableClientArea *, #printableStaffArea, #printableStaffArea * { visibility: visible; }
     }
   </style>
 </head>
-<body class="bg-stone-100 text-stone-800 min-h-screen pb-16 font-sans antialiased">
+<body class="bg-stone-100 text-stone-800 pb-16 font-sans select-none">
 
-  <header class="bg-amber-950 text-white p-4 shadow-md sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto flex flex-wrap justify-between items-center gap-2">
-      <div class="flex items-center space-x-2.5">
+  <!-- Header -->
+  <header class="bg-amber-900 text-white p-4 shadow-md sticky top-0 z-30 flex flex-wrap justify-between items-center gap-2">
+    <div>
+      <div class="flex items-center gap-2">
         <span class="text-2xl">🪵</span>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-lg md:text-xl font-black tracking-wide text-amber-100 uppercase">SEMA FURNITURE</h1>
-            <span class="bg-amber-800 text-amber-200 text-[11px] px-2 py-0.5 rounded font-bold border border-amber-700">Prop: Sewak Singh</span>
-          </div>
-          <p class="text-xs text-amber-300/80 mt-0.5">Staff Attendance, Advances & 15-Day Site Billing</p>
-        </div>
+        <h1 class="text-xl font-black tracking-wide uppercase">SEMA FURNITURE</h1>
+        <span class="bg-amber-800 text-amber-200 text-xs px-2 py-0.5 rounded font-bold">Prop: Sewak Singh</span>
       </div>
-      <div class="flex items-center gap-1.5 text-xs">
-        <button onclick="exportMonthlyCSV()" class="bg-amber-900 hover:bg-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
-          📊 Monthly CSV
-        </button>
-        <button onclick="exportBackupJSON()" class="bg-stone-900 hover:bg-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition">
-          💾 Backup
-        </button>
-        <button onclick="document.getElementById('importFile').click()" class="bg-stone-900 hover:bg-black px-2.5 py-1.5 rounded-lg transition">
-          📂 Restore
-        </button>
-        <input type="file" id="importFile" class="hidden" onchange="importBackupJSON(event)" accept=".json" />
-      </div>
+      <p class="text-xs text-amber-200 mt-0.5">Staff Attendance, Advances & Site Billing</p>
+    </div>
+    <div class="flex items-center gap-1.5 text-xs">
+      <button onclick="exportMonthlyCSV()" class="bg-amber-950 hover:bg-black px-2.5 py-1.5 rounded flex items-center gap-1">📊 CSV</button>
+      <button onclick="exportBackupJSON()" class="bg-amber-950 hover:bg-black px-2.5 py-1.5 rounded flex items-center gap-1">💾 Backup</button>
+      <button onclick="document.getElementById('importFile').click()" class="bg-amber-950 hover:bg-black px-2.5 py-1.5 rounded">📂 Restore</button>
+      <input type="file" id="importFile" class="hidden" onchange="importBackupJSON(event)" accept=".json" />
     </div>
   </header>
 
-  <nav class="max-w-4xl mx-auto px-4 mt-3">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-1.5 bg-stone-200/90 p-1.5 rounded-xl shadow-inner text-xs font-semibold">
-      <button type="button" onclick="showTab('daily')" id="tabBtn-daily" class="tab-active py-2.5 px-2 rounded-lg text-center transition">
-        📋 Daily Entry
-      </button>
-      <button type="button" onclick="showTab('billing')" id="tabBtn-billing" class="bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition">
-        📄 Client 15-Day Bill
-      </button>
-      <button type="button" onclick="showTab('khata')" id="tabBtn-khata" class="bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition">
-        👷 Staff Closing Khata
-      </button>
-      <button type="button" onclick="showTab('manage')" id="tabBtn-manage" class="bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition">
-        ⚙️ Manage Staff & Sites
-      </button>
-    </div>
+  <!-- Navigation Tabs -->
+  <nav class="flex border-b bg-white sticky top-[69px] z-20 shadow-sm text-xs font-bold text-stone-600 overflow-x-auto">
+    <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex-1 py-3 px-3 text-center border-b-2 border-amber-900 text-amber-900 whitespace-nowrap">📋 Daily Entry</button>
+    <button onclick="switchTab('billing')" id="tabBtn-billing" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent hover:text-amber-900 whitespace-nowrap">📄 Client 15-Day Bill</button>
+    <button onclick="switchTab('khata')" id="tabBtn-khata" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent hover:text-amber-900 whitespace-nowrap">👷 Staff Closing Khata</button>
+    <button onclick="switchTab('manage')" id="tabBtn-manage" class="flex-1 py-3 px-3 text-center border-b-2 border-transparent hover:text-amber-900 whitespace-nowrap">⚙️ Manage Staff & Sites</button>
   </nav>
 
-  <main class="max-w-4xl mx-auto px-4 mt-4 space-y-5">
+  <main class="max-w-3xl mx-auto p-4 space-y-5">
 
-    <section id="section-daily" class="space-y-4">
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 space-y-4">
-        <h2 class="font-bold text-stone-800 text-sm md:text-base flex items-center gap-2">
-          <span>📅</span> Mark Daily Site Attendance & Advances
+    <!-- TAB 1: DAILY ENTRY -->
+    <section id="tab-daily" class="space-y-4">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 space-y-4">
+        <h2 class="font-bold text-stone-800 text-sm flex items-center gap-2">
+          <span>📅</span> Mark Daily Attendance & Cash Advances
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-stone-600 mb-1">Work Date</label>
-            <input type="date" id="workDate" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+            <input type="date" id="workDate" class="w-full border rounded-lg p-2.5 text-sm bg-stone-50" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-stone-600 mb-1">Select Client Site</label>
-            <select id="workSite" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50"></select>
+            <select id="workSite" class="w-full border rounded-lg p-2.5 text-sm bg-stone-50"></select>
           </div>
         </div>
 
-        <div>
-          <div class="flex justify-between items-center mb-1.5">
-            <label class="block text-xs font-bold text-stone-700">Select Workers Present at this Site:</label>
-            <div class="space-x-2 text-xs">
-              <button type="button" onclick="toggleAllStaff(true)" class="text-amber-950 font-bold underline">Select All</button>
-              <button type="button" onclick="toggleAllStaff(false)" class="text-stone-500 underline">None</button>
-            </div>
+        <div class="flex justify-between items-center pt-2">
+          <label class="block text-xs font-bold text-stone-700">Select Workers Present at this Site:</label>
+          <div class="space-x-2 text-xs">
+            <button onclick="toggleAllStaff(true)" class="text-amber-900 font-bold underline">Select All</button>
+            <button onclick="toggleAllStaff(false)" class="text-stone-500 underline">None</button>
           </div>
-          <div id="staffChecklist" class="space-y-2 border p-3 rounded-xl bg-stone-50 max-h-72 overflow-y-auto"></div>
         </div>
+
+        <div id="staffChecklist" class="space-y-2 border p-3 rounded-lg bg-stone-50 max-h-72 overflow-y-auto"></div>
 
         <div>
-          <label class="block text-xs font-semibold text-stone-600 mb-1">Work Description / Remarks (Optional)</label>
-          <input type="text" id="workNote" placeholder="e.g. Wardrobe fitting, laminate work, polishing" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+          <label class="block text-xs text-stone-500 mb-1">Work Description / Remarks (Optional)</label>
+          <input type="text" id="workNote" placeholder="e.g., Wardrobe framing, laminate pasting, polishing" class="w-full border rounded-lg p-2.5 text-sm" />
         </div>
 
-        <button type="button" onclick="saveDailyAttendance()" class="w-full bg-amber-950 hover:bg-black text-white font-bold py-3 rounded-xl text-xs md:text-sm shadow transition flex items-center justify-center gap-2">
+        <button onclick="saveDailyAttendance()" class="w-full bg-amber-900 hover:bg-amber-950 text-white font-bold py-3 rounded-lg text-sm shadow transition">
           💾 Save Attendance for All Selected
         </button>
       </div>
 
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-stone-200">
-        <h3 class="font-bold text-xs text-stone-700 uppercase tracking-wider mb-2">Recent 10 Entries</h3>
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
+        <h3 class="font-bold text-xs text-stone-700 uppercase tracking-wider mb-2">Recent Logs</h3>
         <div id="recentLogsList" class="divide-y text-xs"></div>
       </div>
     </section>
 
-    <section id="section-billing" class="space-y-4 hidden">
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 space-y-3.5">
-        <h2 class="font-bold text-stone-800 text-sm md:text-base flex items-center gap-2">
-          <span>📄</span> Generate 15-Day Client Site Bill
-        </h2>
+    <!-- TAB 2: CLIENT 15-DAY BILLING -->
+    <section id="tab-billing" class="space-y-4 hidden">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 space-y-3">
+        <h2 class="font-bold text-stone-800 text-sm">Generate 15-Day Client Site Bill</h2>
         
         <div>
-          <label class="block text-xs font-semibold text-stone-600 mb-1">Select Client Site</label>
-          <select id="billSite" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50"></select>
+          <label class="block text-xs font-semibold text-stone-600 mb-1">Client Site</label>
+          <select id="billSite" class="w-full border rounded-lg p-2.5 text-sm bg-stone-50"></select>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-xs font-semibold text-stone-600 mb-1">From Date</label>
-            <input type="date" id="billFrom" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+            <input type="date" id="billFrom" class="w-full border rounded-lg p-2.5 text-sm" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-stone-600 mb-1">To Date</label>
-            <input type="date" id="billTo" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+            <input type="date" id="billTo" class="w-full border rounded-lg p-2.5 text-sm" />
           </div>
         </div>
 
-        <button type="button" onclick="computeClientBill()" class="w-full bg-stone-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition">
+        <button onclick="computeClientBill()" class="w-full bg-stone-800 hover:bg-black text-white font-bold py-2.5 rounded-lg text-sm transition">
           🔍 Compute Site Bill & Dates
         </button>
       </div>
-
-      <!-- Printable Client Bill Box (No Daily Wages Shown to Client) -->
+      <!-- Printable Client Bill Card -->
       <div id="clientBillResult" class="hidden space-y-3">
-        <div id="printableClientArea" class="bg-white p-6 rounded-2xl border border-stone-300 shadow-sm space-y-4">
+        <div id="printableClientArea" class="bg-white p-6 rounded-xl border border-stone-300 shadow-sm space-y-4">
           <div class="border-b pb-3 flex justify-between items-start">
             <div>
               <h2 class="text-xl font-black text-amber-950 uppercase tracking-wide">SEMA FURNITURE</h2>
               <p class="text-xs font-bold text-amber-900">Proprietor: Sewak Singh</p>
-              <p class="text-[11px] text-stone-500">Carpentry, Modular Furniture & Interior Execution</p>
+              <p class="text-xs text-stone-500">Carpentry, Modular Works & Interior Execution</p>
             </div>
             <div class="text-right">
               <span class="bg-stone-800 text-white text-[11px] font-bold px-2.5 py-1 rounded">SITE LABOR STATEMENT</span>
@@ -161,112 +141,104 @@
             </div>
           </div>
 
-          <div class="bg-stone-50 p-3 rounded-xl border text-xs">
+          <div class="bg-stone-50 p-3 rounded-lg border text-xs">
             <p><strong>Client Site:</strong> <span id="invSiteText" class="font-bold text-amber-950"></span></p>
           </div>
 
-          <!-- Date-wise table -->
+          <!-- Date-wise breakdown table -->
           <div>
-            <h4 class="text-xs font-bold text-stone-700 uppercase mb-1">1. Date-Wise Staff Attendance Breakdown</h4>
-            <table class="w-full text-xs text-left border border-stone-200">
+            <h4 class="text-xs font-bold text-stone-700 uppercase mb-1">Date-Wise Staff Deployment</h4>
+            <table class="w-full text-xs text-left border">
               <thead class="bg-stone-100 border-b">
                 <tr>
                   <th class="p-2 border-r">Date</th>
-                  <th class="p-2 border-r text-center">Workers Present</th>
-                  <th class="p-2">Staff Deployed</th>
+                  <th class="p-2 border-r">Workers Present</th>
+                  <th class="p-2">Staff Names</th>
                 </tr>
               </thead>
               <tbody id="invDateBreakdown" class="divide-y"></tbody>
             </table>
           </div>
 
-          <div class="border-t pt-3 flex justify-between items-center text-xs font-bold bg-amber-50 p-3 rounded-xl">
+          <div class="border-t pt-3 flex justify-between items-center text-sm font-bold bg-amber-50 p-3 rounded">
             <span>Total Staff Shifts Deployed:</span>
-            <span id="invTotalShifts" class="text-amber-950 text-sm">0</span>
+            <span id="invTotalShifts" class="text-amber-950 text-base">0</span>
           </div>
 
-          <div class="flex justify-between items-center text-sm font-black border-t-2 pt-2 text-stone-900">
+          <div class="flex justify-between items-center text-base font-black border-t-2 pt-2 text-stone-900">
             <span>TOTAL PAYMENT DUE:</span>
             <span class="text-xl text-amber-950">₹<span id="invTotalPayment">0</span></span>
-          </div>
-
-          <div class="pt-4 border-t text-[10px] text-stone-400 flex justify-between">
-            <span>Sema Furniture (Sewak Singh)</span>
-            <span>Authorized Signature</span>
           </div>
         </div>
 
         <div class="flex gap-2">
-          <button type="button" onclick="shareClientWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow">
+          <button onclick="shareClientWhatsApp()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg text-xs flex justify-center items-center gap-1 shadow">
             💬 Send to Client on WhatsApp
           </button>
-          <button type="button" onclick="downloadClientPDF()" class="flex-1 bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow">
+          <button onclick="downloadClientPDF()" class="flex-1 bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-lg text-xs flex justify-center items-center gap-1 shadow">
             📄 Download Client PDF
           </button>
         </div>
       </div>
     </section>
 
-    <section id="section-khata" class="space-y-4 hidden">
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-200 space-y-3.5">
-        <h2 class="font-bold text-stone-800 text-sm md:text-base flex items-center gap-2">
-          <span>👷</span> Staff Salary & Advance Closing Slip
-        </h2>
+    <!-- TAB 3: STAFF CLOSING KHATA -->
+    <section id="tab-khata" class="space-y-4 hidden">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-200 space-y-3">
+        <h2 class="font-bold text-stone-800 text-sm">Staff Salary & Advance Closing Slip</h2>
         
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Select Staff Worker</label>
-          <select id="khataStaff" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50"></select>
+          <select id="khataStaff" class="w-full border rounded-lg p-2.5 text-sm bg-stone-50"></select>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-xs font-semibold text-stone-600 mb-1">From Date</label>
-            <input type="date" id="khataFrom" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+            <input type="date" id="khataFrom" class="w-full border rounded-lg p-2.5 text-sm" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-stone-600 mb-1">To Date</label>
-            <input type="date" id="khataTo" class="w-full border rounded-xl p-2.5 text-xs bg-stone-50" />
+            <input type="date" id="khataTo" class="w-full border rounded-lg p-2.5 text-sm" />
           </div>
         </div>
 
-        <button type="button" onclick="generateStaffKhata()" class="w-full bg-stone-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition">
+        <button onclick="generateStaffKhata()" class="w-full bg-stone-800 hover:bg-black text-white font-bold py-2.5 rounded-lg text-sm transition">
           📊 Calculate Worker Closing Slip
         </button>
       </div>
-
-      <!-- Staff Closing Result -->
       <div id="staffKhataResult" class="hidden space-y-3">
-        <div id="printableStaffArea" class="bg-white p-6 rounded-2xl border border-stone-300 shadow-sm space-y-4 text-xs">
+        <div id="printableStaffArea" class="bg-white p-6 rounded-xl border border-stone-300 shadow-sm space-y-4 text-xs">
           <div class="border-b pb-3 flex justify-between items-start">
             <div>
               <h2 class="text-lg font-black text-amber-950 uppercase">SEMA FURNITURE</h2>
               <p class="text-xs font-bold text-amber-900">Proprietor: Sewak Singh</p>
             </div>
             <div class="text-right">
-              <span class="bg-amber-950 text-white text-[10px] font-bold px-2 py-0.5 rounded">STAFF PAYMENT SETTLEMENT</span>
+              <span class="bg-amber-900 text-white text-[10px] font-bold px-2 py-0.5 rounded">STAFF SETTLEMENT</span>
               <p class="text-[10px] text-stone-500 mt-1" id="khataPeriodText"></p>
             </div>
           </div>
 
-          <div class="bg-stone-50 p-2.5 rounded-xl border flex justify-between items-center">
+          <div class="bg-stone-50 p-2.5 rounded border flex justify-between items-center">
             <div>
               <p class="text-xs"><strong>Worker Name:</strong> <span id="khataWorkerName" class="font-bold text-stone-900 text-sm"></span></p>
-              <p class="text-[11px] text-stone-500">Daily Wage Rate: ₹<span id="khataDailyRate"></span>/day</p>
+              <p class="text-[11px] text-stone-500">Daily Wage: ₹<span id="khataDailyRate"></span>/day</p>
             </div>
             <div class="text-right">
-              <p class="text-xs">Total Days Worked: <strong id="khataTotalDays">0</strong></p>
+              <p class="text-xs">Total Days: <strong id="khataTotalDays">0</strong></p>
               <p class="text-xs text-emerald-800 font-bold">Gross Earned: ₹<span id="khataGrossAmount">0</span></p>
             </div>
           </div>
 
           <div>
-            <h4 class="font-bold text-stone-700 uppercase tracking-wider text-[11px] mb-1">Itemized Cash Advances Taken (Deductions)</h4>
+            <h4 class="font-bold text-stone-700 uppercase tracking-wider text-[11px] mb-1">Itemized Cash Advances Taken</h4>
             <table class="w-full text-left border">
               <thead class="bg-stone-100 border-b">
                 <tr>
                   <th class="p-1.5 border-r">Date</th>
                   <th class="p-1.5 border-r">Site</th>
-                  <th class="p-1.5 border-r">Remarks / Reason</th>
+                  <th class="p-1.5 border-r">Remarks</th>
                   <th class="p-1.5 text-right">Advance (₹)</th>
                 </tr>
               </thead>
@@ -279,61 +251,56 @@
               <span>Gross Earnings:</span>
               <span class="font-bold">₹<span id="khataSummaryGross">0</span></span>
             </div>
-            <div class="flex justify-between text-xs text-rose-600">
+            <div class="flex justify-between text-xs text-red-600">
               <span>Less Total Advance Taken:</span>
               <span class="font-bold">- ₹<span id="khataSummaryAdvance">0</span></span>
             </div>
             <div class="flex justify-between text-sm font-black border-t pt-1.5 text-stone-900">
-              <span>NET PAYABLE CASH BALANCE:</span>
+              <span>NET PAYABLE BALANCE:</span>
               <span class="text-amber-950 text-base">₹<span id="khataSummaryNet">0</span></span>
             </div>
           </div>
-
-          <div class="pt-4 border-t text-[10px] text-stone-400 flex justify-between">
-            <span>Worker Signature / Thumb</span>
-            <span>Sewak Singh (Owner)</span>
-          </div>
         </div>
 
-        <button type="button" onclick="downloadStaffPDF()" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow">
+        <button onclick="downloadStaffPDF()" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-bold py-2.5 rounded-lg text-xs flex justify-center items-center gap-1 shadow">
           📄 Download Worker Closing Slip (PDF)
         </button>
       </div>
     </section>
 
-    <section id="section-manage" class="space-y-4 hidden">
+    <!-- TAB 4: MANAGE STAFF & SITES -->
+    <section id="tab-manage" class="space-y-4 hidden">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Add Staff -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-2">
+        <div class="bg-white p-4 rounded-xl shadow-sm border space-y-2">
           <h3 class="font-bold text-xs uppercase tracking-wider text-stone-700">Add Staff Member</h3>
-          <input type="text" id="newStaffName" placeholder="Worker Name (e.g. Ramesh Carpenter)" class="w-full border rounded-xl p-2 text-xs" />
-          <input type="number" id="newStaffWage" placeholder="Daily Wage in ₹ (e.g. 900)" class="w-full border rounded-xl p-2 text-xs" />
-          <button type="button" onclick="addStaff()" class="w-full bg-amber-950 hover:bg-black text-white py-2 rounded-xl text-xs font-bold">Add Worker</button>
+          <input type="text" id="newStaffName" placeholder="Worker Name (e.g. Ramesh Carpenter)" class="w-full border rounded-lg p-2 text-xs" />
+          <input type="number" id="newStaffWage" placeholder="Daily Wage (e.g. 900)" class="w-full border rounded-lg p-2 text-xs" />
+          <button onclick="addStaff()" class="w-full bg-stone-800 text-white py-2 rounded-lg text-xs font-bold">Add Worker</button>
           <div id="manageStaffPills" class="flex flex-wrap gap-1 pt-2"></div>
         </div>
-
         <!-- Add Site -->
-        <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-2">
+        <div class="bg-white p-4 rounded-xl shadow-sm border space-y-2">
           <h3 class="font-bold text-xs uppercase tracking-wider text-stone-700">Add Client Site</h3>
-          <input type="text" id="newSiteName" placeholder="Client Site Name (e.g. Sharma Villa)" class="w-full border rounded-xl p-2 text-xs" />
-          <input type="number" id="newSiteRate" placeholder="Agreed Shift Billing Charge (e.g. 1200)" class="w-full border rounded-xl p-2 text-xs" />
-          <button type="button" onclick="addSite()" class="w-full bg-amber-950 hover:bg-black text-white py-2 rounded-xl text-xs font-bold">Save Client Site</button>
+          <input type="text" id="newSiteName" placeholder="Site Name (e.g. Sharma Villa)" class="w-full border rounded-lg p-2 text-xs" />
+          <input type="number" id="newSiteRate" placeholder="Client Billing Rate / Shift (e.g. 1200)" class="w-full border rounded-lg p-2 text-xs" />
+          <button onclick="addSite()" class="w-full bg-stone-800 text-white py-2 rounded-lg text-xs font-bold">Save Site</button>
           <div id="manageSitesList" class="space-y-1 pt-2"></div>
         </div>
       </div>
 
-      <!-- GOOGLE SHEETS CLOUD SYNC SECTION -->
-      <div class="bg-emerald-50 border-2 border-emerald-300 p-4 rounded-2xl shadow-sm space-y-2">
+      <!-- Google Cloud Box -->
+      <div class="bg-emerald-50 border-2 border-emerald-300 p-4 rounded-xl shadow-sm space-y-2">
         <div class="flex items-center gap-2 text-emerald-950 font-bold text-sm">
           <span>☁️</span>
-          <h3>Google Sheets Cloud Database (Free & Permanent)</h3>
+          <h3>Google Sheets Cloud Sync</h3>
         </div>
         <p class="text-xs text-emerald-800">
-          Paste your Google Apps Script Web App URL below. When saved, every attendance entry automatically syncs directly to your Google Sheet so you never lose old data!
+          Paste your Google Apps Script URL here so all entries automatically save to Google Drive permanently.
         </p>
-        <div class="flex flex-col sm:flex-row gap-2">
-          <input type="url" id="googleCloudUrl" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 border border-emerald-300 rounded-xl p-2 text-xs bg-white" />
-          <button type="button" onclick="saveCloudUrl()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-4 py-2 rounded-xl text-xs font-bold shadow whitespace-nowrap">
+        <div class="flex gap-2">
+          <input type="url" id="googleCloudUrl" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 border border-emerald-300 rounded-lg p-2 text-xs bg-white" />
+          <button onclick="saveCloudUrl()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-4 py-2 rounded-lg text-xs font-bold shadow">
             Save Cloud URL
           </button>
         </div>
@@ -344,8 +311,7 @@
   </main>
 
   <script>
-    // Primary Data Storage
-    let appData = {
+    let appData = JSON.parse(localStorage.getItem('semaFurnitureData')) || {
       cloudUrl: '',
       staff: [
         { name: 'Ramesh Carpenter', wage: 900 },
@@ -359,141 +325,84 @@
       logs: []
     };
 
-    // Load stored data safely
-    try {
-      const stored = localStorage.getItem('semaFurnitureData');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed && typeof parsed === 'object') {
-          appData = Object.assign(appData, parsed);
-        }
-      }
-    } catch (e) {
-      console.warn("Storage load warning:", e);
-    }
-
     function persist() {
-      try {
-        localStorage.setItem('semaFurnitureData', JSON.stringify(appData));
-      } catch (e) {
-        console.warn("Storage save warning:", e);
-      }
+      localStorage.setItem('semaFurnitureData', JSON.stringify(appData));
       render();
     }
 
-    function showTab(tabId) {
-      const tabs = ['daily', 'billing', 'khata', 'manage'];
-      tabs.forEach(t => {
-        const sec = document.getElementById('section-' + t);
-        const btn = document.getElementById('tabBtn-' + t);
-        if (sec) {
-          if (t === tabId) {
-            sec.classList.remove('hidden');
-          } else {
-            sec.classList.add('hidden');
-          }
-        }
-        if (btn) {
-          if (t === tabId) {
-            btn.className = "tab-active py-2.5 px-2 rounded-lg text-center transition";
-          } else {
-            btn.className = "bg-white/60 text-stone-700 hover:bg-white py-2.5 px-2 rounded-lg text-center transition";
-          }
+    document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
+
+    function switchTab(tab) {
+      ['daily', 'billing', 'khata', 'manage'].forEach(t => {
+        document.getElementById(tab-${t}).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(tabBtn-${t});
+        if (t === tab) {
+          btn.className = "flex-1 py-3 px-3 text-center border-b-2 border-amber-900 text-amber-900 font-bold whitespace-nowrap";
+        } else {
+          btn.className = "flex-1 py-3 px-3 text-center border-b-2 border-transparent text-stone-600 hover:text-amber-900 whitespace-nowrap";
         }
       });
     }
 
     function render() {
-      // 1. Populate Site dropdowns
-      const siteOpts = appData.sites.map(s => '<option value="' + escapeHtml(s.name) + '">' + escapeHtml(s.name) + '</option>').join('');
-      const workSiteElem = document.getElementById('workSite');
-      const billSiteElem = document.getElementById('billSite');
-      if (workSiteElem) workSiteElem.innerHTML = siteOpts || '<option value="">No sites added yet</option>';
-      if (billSiteElem) billSiteElem.innerHTML = siteOpts || '<option value="">No sites added yet</option>';
+      const siteOpts = appData.sites.map(s => <option value="${s.name}">${s.name}</option>).join('');
+      document.getElementById('workSite').innerHTML = siteOpts || '<option>No sites added</option>';
+      document.getElementById('billSite').innerHTML = siteOpts || '<option>No sites added</option>';
 
-      // 2. Staff dropdown for Khata
-      const khataStaffElem = document.getElementById('khataStaff');
-      if (khataStaffElem) {
-        khataStaffElem.innerHTML = appData.staff.map(s => '<option value="' + escapeHtml(s.name) + '">' + escapeHtml(s.name) + '</option>').join('');
-      }
+      document.getElementById('khataStaff').innerHTML = appData.staff.map(s => <option value="${s.name}">${s.name}</option>).join('');
 
-      // 3. Multi-staff checklist for daily entry
       const checklist = document.getElementById('staffChecklist');
-      if (checklist) {
-        if (appData.staff.length === 0) {
-          checklist.innerHTML = '<p class="text-xs text-stone-400 italic">No workers added yet. Go to "Manage Staff & Sites" to add workers.</p>';
-        } else {
-          checklist.innerHTML = appData.staff.map((s, idx) => 
-            '<div class="flex items-center justify-between bg-white p-2 rounded-lg border border-stone-200">' +
-              '<label class="flex items-center gap-2 cursor-pointer flex-1">' +
-                '<input type="checkbox" id="chkStaff_' + idx + '" value="' + escapeHtml(s.name) + '" class="staff-check w-4 h-4 text-amber-950 accent-amber-950 rounded" />' +
-                '<span class="text-xs font-bold text-stone-800">' + escapeHtml(s.name) + '</span>' +
-              '</label>' +
-              '<div class="flex items-center gap-1.5">' +
-                '<select id="shiftStaff_' + idx + '" class="text-xs border rounded p-1 bg-stone-50">' +
-                  '<option value="1">1 Day</option>' +
-                  '<option value="0.5">½ Day</option>' +
-                  '<option value="1.5">1.5 OT</option>' +
-                '</select>' +
-                '<input type="number" id="advStaff_' + idx + '" placeholder="Adv ₹" class="w-16 text-xs border rounded p-1 text-rose-600 font-bold" />' +
-              '</div>' +
-            '</div>'
-          ).join('');
-        }
-      }
-
-      // 4. Staff pills in Manage
-      const staffPills = document.getElementById('manageStaffPills');
-      if (staffPills) {
-        staffPills.innerHTML = appData.staff.map((s, idx) => 
-          '<span class="bg-stone-100 text-stone-700 px-2 py-1 rounded-lg text-xs border flex items-center gap-1">' +
-            escapeHtml(s.name) + ' (₹' + s.wage + '/d) <button type="button" onclick="removeStaff(' + idx + ')" class="text-rose-500 font-bold ml-1">&times;</button>' +
-          '</span>'
+      if (appData.staff.length === 0) {
+        checklist.innerHTML = <p class="text-xs text-stone-400 italic">No workers added yet.</p>;
+      } else {
+        checklist.innerHTML = appData.staff.map((s, idx) => `
+          <div class="flex items-center justify-between bg-white p-2.5 rounded border border-stone-200">
+            <label class="flex items-center gap-2 cursor-pointer flex-1">
+            <input type="checkbox" id="chkStaff_${idx}" value="${s.name}" class="staff-check w-4 h-4 text-amber-900 accent-amber-900 rounded" />
+              <span class="text-xs font-bold text-stone-800">${s.name}</span>
+            </label>
+            <div class="flex items-center gap-1.5">
+              <select id="shiftStaff_${idx}" class="text-xs border rounded p-1 bg-stone-50">
+                <option value="1">1 Day</option>
+                <option value="0.5">½ Day</option>
+                <option value="1.5">1.5 OT</option>
+              </select>
+              <input type="number" id="advStaff_${idx}" placeholder="Adv ₹" class="w-16 text-xs border rounded p-1 text-red-600 font-semibold" />
+            </div>
+          </div>
         ).join('');
       }
 
-      // 5. Sites list in Manage
-      const sitesList = document.getElementById('manageSitesList');
-      if (sitesList) {
-        sitesList.innerHTML = appData.sites.map((s, idx) => 
-          '<div class="flex justify-between items-center text-xs bg-stone-50 p-2 rounded-lg border">' +
-            '<span><strong>' + escapeHtml(s.name) + '</strong></span>' +
-            '<button type="button" onclick="removeSite(' + idx + ')" class="text-rose-500 font-semibold">Delete</button>' +
-          '</div>'
-        ).join('');
-      }
+      document.getElementById('manageStaffPills').innerHTML = appData.staff.map((s, idx) => 
+        <span class="bg-stone-100 text-stone-700 px-2 py-1 rounded text-xs border flex items-center gap-1">
+          ${s.name} (₹${s.wage}/d) <button onclick="removeStaff(${idx})" class="text-red-500 font-bold">&times;</button>
+        </span>
+      ).join('');
 
-      // 6. Recent Logs
-      const logsElem = document.getElementById('recentLogsList');
-      if (logsElem) {
-        const logsRev = [...appData.logs].reverse().slice(0, 10);
-        logsElem.innerHTML = logsRev.length ? logsRev.map((l, idx) => 
-          '<div class="py-2 flex justify-between items-center">' +
-            '<div>' +
-              '<strong class="text-stone-800">' + escapeHtml(l.date) + '</strong> - ' + escapeHtml(l.staff) + ' @ ' + escapeHtml(l.site) + ' (' + l.shift + ' shift)' +
-              (Number(l.advance) > 0 ? '<span class="text-rose-600 font-bold ml-1">Advance: ₹' + l.advance + '</span>' : '') +
-            '</div>' +
-            '<button type="button" onclick="deleteLog(' + (appData.logs.length - 1 - idx) + ')" class="text-rose-400 hover:text-rose-600 font-bold">✕</button>' +
-          '</div>'
-        ).join('') : '<p class="text-stone-400 italic py-2">No entries logged yet.</p>';
-      }
+      document.getElementById('manageSitesList').innerHTML = appData.sites.map((s, idx) => 
+        <div class="flex justify-between items-center text-xs bg-stone-50 p-2 rounded border">
+          <span><strong>${s.name}</strong></span>
+          <button onclick="removeSite(${idx})" class="text-red-500 font-semibold">Delete</button>
+        </div>
+      ).join('');
 
-      // 7. Google Cloud URL
+      const logsRev = [...appData.logs].reverse().slice(0, 10);
+      document.getElementById('recentLogsList').innerHTML = logsRev.length ? logsRev.map((l, idx) => 
+        <div class="py-2 flex justify-between items-center">
+          <div>
+            <strong class="text-stone-800">${l.date}</strong> - ${l.staff} @ ${l.site} (${l.shift} shift)
+            ${Number(l.advance) > 0 ? <span class="text-red-600 font-bold ml-1">Advance: ₹${l.advance}</span> : ''}
+          </div>
+          <button onclick="deleteLog(${appData.logs.length - 1 - idx})" class="text-red-400 hover:text-red-600">✕</button>
+        </div>
+      ).join('') : '<p class="text-stone-400 italic py-2">No entries logged yet.</p>';
+
       const urlInput = document.getElementById('googleCloudUrl');
       if (urlInput) urlInput.value = appData.cloudUrl || '';
       const statusMsg = document.getElementById('cloudStatusMsg');
       if (statusMsg) {
-        statusMsg.textContent = appData.cloudUrl 
-          ? "✅ Cloud sync active. Entries automatically save to Google Sheets." 
-          : "⚠️ Paste your Google Sheets Web App URL above for permanent cloud backup.";
+        statusMsg.textContent = appData.cloudUrl ? "✅ Cloud sync is active." : "⚠️ Not connected to Google Sheets yet.";
       }
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-      });
     }
 
     function toggleAllStaff(state) {
@@ -522,25 +431,23 @@
       const site = document.getElementById('workSite').value;
       const note = document.getElementById('workNote').value.trim();
 
-      if (!site || site === 'No sites added yet') {
-        alert("Please add and select a client site first.");
+      if (!site || site === 'No sites added') {
+        alert("Please select a client site first.");
         return;
       }
 
       const newBatch = [];
       appData.staff.forEach((s, idx) => {
-        const cb = document.getElementById('chkStaff_' + idx);
+        const cb = document.getElementById(chkStaff_${idx});
         if (cb && cb.checked) {
-          const shift = parseFloat(document.getElementById('shiftStaff_' + idx).value) || 1;
-          const advance = parseFloat(document.getElementById('advStaff_' + idx).value) || 0;
+          const shift = parseFloat(document.getElementById(shiftStaff_${idx}).value) || 1;
+          const advance = parseFloat(document.getElementById(advStaff_${idx}`).value) || 0;
 
           const entry = { date, staff: s.name, site, shift, advance, note };
           appData.logs.push(entry);
           newBatch.push(entry);
-
-          cb.checked = false;
-          const advInput = document.getElementById('advStaff_' + idx);
-          if (advInput) advInput.value = '';
+       cb.checked = false;
+          document.getElementById(advStaff_${idx}).value = '';
         }
       });
 
@@ -552,7 +459,7 @@
       document.getElementById('workNote').value = '';
       persist();
       syncToGoogleSheets(newBatch);
-      alert("Saved attendance for " + newBatch.length + " workers at Sema Furniture!");
+      alert(Saved attendance for ${newBatch.length} workers!);
     }
 
     function deleteLog(idx) {
@@ -599,7 +506,7 @@
       const from = document.getElementById('billFrom').value;
       const to = document.getElementById('billTo').value;
 
-      if (!site || !from || !to) {
+      if (!site  !from  !to) {
         alert("Please select site and date range.");
         return;
       }
@@ -621,20 +528,22 @@
         const workers = dateMap[dt];
         const dayShifts = workers.reduce((sum, w) => sum + w.shift, 0);
         totalShifts += dayShifts;
-        const names = workers.map(w => escapeHtml(w.staff)).join(', ');
-        return '<tr class="border-b">' +
-          '<td class="p-2 border-r font-semibold">' + dt + '</td>' +
-          '<td class="p-2 border-r font-bold text-center text-amber-950">' + workers.length + ' workers (' + dayShifts + ' shift)</td>' +
-          '<td class="p-2 text-stone-600">' + names + '</td>' +
-        '</tr>';
+        const names = workers.map(w => w.staff).join(', ');
+        return 
+          <tr class="border-b">
+            <td class="p-2 border-r font-semibold">${dt}</td>
+            <td class="p-2 border-r font-bold text-amber-950">${workers.length} worker${workers.length > 1 ? 's' : ''} (${dayShifts} shift)</td>
+            <td class="p-2 text-stone-600">${names}</td>
+          </tr>
+        ;
       }).join('');
 
       const totalPayment = totalShifts * shiftRate;
       activeClientInvoice = { site, from, to, totalShifts, totalPayment, dateMap, datesList };
 
-      document.getElementById('invPeriodText').textContent = from + ' to ' + to;
+      document.getElementById('invPeriodText').textContent = ${from} to ${to};
       document.getElementById('invSiteText').textContent = site;
-      document.getElementById('invDateBreakdown').innerHTML = breakdownRows || '<tr><td colspan="3" class="p-2 text-center text-stone-400">No shifts recorded in this date range.</td></tr>';
+      document.getElementById('invDateBreakdown').innerHTML = breakdownRows || '<tr><td colspan="3" class="p-2 text-center text-stone-400">No shifts recorded in this range.</td></tr>';
       document.getElementById('invTotalShifts').textContent = totalShifts;
       document.getElementById('invTotalPayment').textContent = totalPayment.toLocaleString('en-IN');
 
@@ -646,26 +555,21 @@
       let breakdownMsg = "";
       activeClientInvoice.datesList.forEach(dt => {
         const workers = activeClientInvoice.dateMap[dt];
-        breakdownMsg += "• " + dt + ": *" + workers.length + " workers* (" + workers.map(w => w.staff).join(', ') + ")\n";
+        breakdownMsg += • ${dt}: *${workers.length} workers* (${workers.map(w => w.staff).join(', ')})\n;
       });
-
-      const msg = "*SEMA FURNITURE - SITE STATEMENT*\n*Proprietor: Sewak Singh*\nSite: *" + activeClientInvoice.site + "*\nPeriod: " + activeClientInvoice.from + " to " + activeClientInvoice.to + "\n\n*Date-Wise Attendance:*\n" + breakdownMsg + "--------------------\nTotal Shifts Deployed: *" + activeClientInvoice.totalShifts + "*\n*Total Payment Due: ₹" + activeClientInvoice.totalPayment.toLocaleString('en-IN') + "*\n\nThank you!";
-      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+      const msg = *SEMA FURNITURE - SITE STATEMENT*\n*Proprietor: Sewak Singh*\nSite: *${activeClientInvoice.site}*\nPeriod: ${activeClientInvoice.from} to ${activeClientInvoice.to}\n\n*Date-Wise Attendance:*\n${breakdownMsg}\n--------------------\nTotal Shifts Deployed: *${activeClientInvoice.totalShifts}*\n*Total Payment Due: ₹${activeClientInvoice.totalPayment.toLocaleString('en-IN')}*\n\nThank you!;
+      window.open(https://wa.me/?text=${encodeURIComponent(msg)}, '_blank');
     }
 
     function downloadClientPDF() {
       const element = document.getElementById('printableClientArea');
-      if (typeof html2pdf !== 'undefined') {
-        html2pdf().set({
-          margin: 10,
-          filename: 'Sema_Furniture_Bill_' + activeClientInvoice.site + '_' + activeClientInvoice.from + '.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
-      } else {
-        window.print();
-      }
+      html2pdf().set({
+        margin: 10,
+        filename: Sema_Furniture_Bill_${activeClientInvoice.site}_${activeClientInvoice.from}.pdf,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
     }
 
     let activeStaffKhata = null;
@@ -675,7 +579,7 @@
       const from = document.getElementById('khataFrom').value;
       const to = document.getElementById('khataTo').value;
 
-      if (!staffName || !from || !to) {
+      if (!staffName  !from  !to) {
         alert("Please select staff and date range.");
         return;
       }
@@ -693,20 +597,20 @@
 
       activeStaffKhata = { staffName, wage, from, to, totalDays, grossAmount, totalAdvance, netPayable };
 
-      document.getElementById('khataPeriodText').textContent = from + ' to ' + to;
+      document.getElementById('khataPeriodText').textContent = ${from} to ${to};
       document.getElementById('khataWorkerName').textContent = staffName;
       document.getElementById('khataDailyRate').textContent = wage;
       document.getElementById('khataTotalDays').textContent = totalDays;
       document.getElementById('khataGrossAmount').textContent = grossAmount.toLocaleString('en-IN');
 
       document.getElementById('khataAdvancesTable').innerHTML = advanceEntries.length ? advanceEntries.map(a => 
-        '<tr class="border-b">' +
-          '<td class="p-1.5 border-r font-semibold">' + escapeHtml(a.date) + '</td>' +
-          '<td class="p-1.5 border-r">' + escapeHtml(a.site) + '</td>' +
-          '<td class="p-1.5 border-r text-stone-500">' + escapeHtml(a.note || '-') + '</td>' +
-          '<td class="p-1.5 text-right font-bold text-rose-600">₹' + a.advance + '</td>' +
-        '</tr>'
-      ).join('') : '<tr><td colspan="4" class="p-2 text-center text-stone-400">No cash advances taken during this period.</td></tr>';
+        <tr class="border-b">
+          <td class="p-1.5 border-r font-semibold">${a.date}</td>
+          <td class="p-1.5 border-r">${a.site}</td>
+          <td class="p-1.5 border-r text-stone-500">${a.note || '-'}</td>
+          <td class="p-1.5 text-right font-bold text-red-600">₹${a.advance}</td>
+        </tr>
+      ).join('') : <tr><td colspan="4" class="p-2 text-center text-stone-400">No cash advances taken during this period.</td></tr>;
 
       document.getElementById('khataSummaryGross').textContent = grossAmount.toLocaleString('en-IN');
       document.getElementById('khataSummaryAdvance').textContent = totalAdvance.toLocaleString('en-IN');
@@ -717,23 +621,18 @@
 
     function downloadStaffPDF() {
       const element = document.getElementById('printableStaffArea');
-      if (typeof html2pdf !== 'undefined') {
-        html2pdf().set({
-          margin: 10,
-          filename: 'Staff_Closing_' + activeStaffKhata.staffName + '_' + activeStaffKhata.from + '.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
-      } else {
-        window.print();
-      }
+      html2pdf().set({
+        margin: 10,
+        filename: Staff_Closing_${activeStaffKhata.staffName}_${activeStaffKhata.from}.pdf,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
     }
 
     function exportMonthlyCSV() {
       const monthInput = prompt("Enter Year-Month (e.g. 2026-10):", new Date().toISOString().slice(0, 7));
       if (!monthInput) return;
-
       const monthlyLogs = appData.logs.filter(l => l.date && l.date.startsWith(monthInput));
       if (monthlyLogs.length === 0) {
         alert("No entries found for " + monthInput);
@@ -742,13 +641,13 @@
 
       let csv = "Date,Staff Name,Site Name,Shift,Advance (INR),Remarks\n";
       monthlyLogs.forEach(r => {
-        csv += '"' + r.date + '","' + r.staff + '","' + r.site + '",' + r.shift + ',' + (r.advance || 0) + ',"' + ((r.note || '').replace(/"/g, '""')) + '"\n';
+        csv += "${r.date}","${r.staff}","${r.site}",${r.shift},${r.advance || 0},"${(r.note || '').replace(/"/g, '""')}"\n;
       });
 
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = 'Sema_Furniture_Report_' + monthInput + '.csv';
+      link.download = Sema_Furniture_Report_${monthInput}.csv;
       link.click();
     }
 
@@ -756,7 +655,7 @@
       const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'Sema_Furniture_Backup_' + new Date().toISOString().split('T')[0] + '.json';
+      a.download = Sema_Furniture_Backup_${new Date().toISOString().split('T')[0]}.json;
       a.click();
     }
 
@@ -776,22 +675,7 @@
       reader.readAsText(file);
     }
 
-    window.onload = function() {
-      const today = new Date().toISOString().split('T')[0];
-      const workDateInput = document.getElementById('workDate');
-      const billFromInput = document.getElementById('billFrom');
-      const billToInput = document.getElementById('billTo');
-      const khataFromInput = document.getElementById('khataFrom');
-      const khataToInput = document.getElementById('khataTo');
-
-      if (workDateInput) workDateInput.value = today;
-      if (billFromInput) billFromInput.value = today.slice(0, 8) + '01';
-      if (billToInput) billToInput.value = today;
-      if (khataFromInput) khataFromInput.value = today.slice(0, 8) + '01';
-      if (khataToInput) khataToInput.value = today;
-
-      render();
-    };
+    render();
   </script>
 </body>
 </html>
