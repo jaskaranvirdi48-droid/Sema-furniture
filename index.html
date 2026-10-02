@@ -51,7 +51,7 @@
   </style>
 </head>
 <body>
-[02-10-2026 09:03 PM] Jaskarandeep Singh: <header>
+<header>
     <div class="header-top">
       <div style="display:flex; align-items:center;">
         <span class="logo">🪵 SEMA FURNITURE</span>
@@ -149,7 +149,7 @@
             </thead>
             <tbody id="tblClientBody"></tbody>
           </table>
-[02-10-2026 09:03 PM] Jaskarandeep Singh: <div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
+<div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
             <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
               <span>Total Shifts Deployed:</span>
               <span id="lblTotalShifts">0</span>
@@ -231,7 +231,7 @@
     <!-- 4. MANAGE SETUP & GOOGLE SHEETS -->
     <div id="section-manage" class="hidden">
       <div class="card" style="background:#ecfdf5; border-color:#a7f3d0;">
-[02-10-2026 09:03 PM] Jaskarandeep Singh: <div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
+<div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
         <p style="font-size:11px; color:#047857; margin-bottom:8px;">
           Paste your Google Web App URL below to automatically save all attendance entries to your Google Sheet.
         </p>
@@ -327,7 +327,7 @@
       var chk = document.getElementById('staffChecklist');
       if (db.staff.length === 0) {
         chk.innerHTML = '<p style="padding:10px; font-size:12px; color:#888;">No staff registered yet.</p>';
-[02-10-2026 09:03 PM] Jaskarandeep Singh: } else {
+} else {
         var chkHtml = '';
         for (var k = 0; k < db.staff.length; k++) {
           var s = db.staff[k];
@@ -425,7 +425,7 @@
 
       document.getElementById('workNote').value = '';
       saveDb();
-[02-10-2026 09:03 PM] Jaskarandeep Singh: if (db.cloudUrl) {
+if (db.cloudUrl) {
         fetch(db.cloudUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -527,7 +527,7 @@
         var dt = dates[i];
         var w = clientReport.dateMap[dt];
         var staffNames = [];
-[02-10-2026 09:03 PM] Jaskarandeep Singh: for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
+for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
         msg += "• " + dt + ": " + w.length + " staff (" + staffNames.join(', ') + ")\n";
       }
       msg += "\nTotal Shifts: *" + clientReport.totalShifts + "*\n*Total Due: ₹" + clientReport.totalPayment.toLocaleString('en-IN') + "*";
