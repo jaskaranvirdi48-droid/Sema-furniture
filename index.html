@@ -10,30 +10,25 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #f5f5f4; color: #292524; padding-bottom: 70px; }
     
-    /* Header */
     header { background: #78350f; color: #fff; padding: 14px 16px; position: sticky; top: 0; z-index: 50; }
     .header-top { display: flex; justify-content: space-between; align-items: center; }
     .logo { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
     .owner-badge { background: #92400e; color: #fde68a; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-left: 6px; }
     .subtext { font-size: 11px; color: #fde68a; margin-top: 3px; }
     
-    /* Mobile Tab Bar - 4 Equal Fixed Buttons */
     .tab-bar { display: grid; grid-template-columns: repeat(4, 1fr); background: #ffffff; border-bottom: 2px solid #e7e5e4; position: sticky; top: 62px; z-index: 40; }
     .tab-btn { padding: 12px 2px; font-size: 11px; font-weight: 700; border: none; background: none; color: #78716c; text-align: center; border-bottom: 3px solid transparent; cursor: pointer; }
     .tab-btn.active { color: #78350f; border-bottom: 3px solid #78350f; background: #fafaf9; }
     
-    /* Layout */
     .content-area { max-width: 600px; margin: 0 auto; padding: 14px; }
     .card { background: #ffffff; border-radius: 12px; border: 1px solid #e7e5e4; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .card-title { font-size: 14px; font-weight: 800; color: #1c1917; margin-bottom: 12px; }
     
-    /* Forms */
     .form-group { margin-bottom: 12px; }
     label { display: block; font-size: 11px; font-weight: 700; color: #57534e; margin-bottom: 4px; }
     input, select { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #d6d3d1; border-radius: 8px; background: #fafaf9; outline: none; }
     input:focus, select:focus { border-color: #78350f; background: #fff; }
     
-    /* Checklist */
     .checklist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .checklist-box { border: 1px solid #e7e5e4; border-radius: 8px; background: #fafaf9; max-height: 240px; overflow-y: auto; padding: 6px; }
     .worker-row { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e7e5e4; }
@@ -43,12 +38,10 @@
     .worker-controls select { padding: 4px; font-size: 11px; width: auto; }
     .worker-controls input { width: 75px; padding: 4px; font-size: 12px; }
     
-    /* Buttons */
     .btn-main { width: 100%; background: #78350f; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 6px; }
     .btn-dark { width: 100%; background: #292524; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-green { width: 100%; background: #16a34a; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .btn-red { background: #dc2626; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; font-size: 11px; font-weight: 700; cursor: pointer; }
-[02-10-2026 08:56 PM] Jaskarandeep Singh: /* Tables & Statements */
+    
     table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
     th, td { border: 1px solid #e7e5e4; padding: 8px; text-align: left; }
     th { background: #f5f5f4; font-weight: 700; }
@@ -58,8 +51,7 @@
   </style>
 </head>
 <body>
-
-  <header>
+[02-10-2026 09:03 PM] Jaskarandeep Singh: <header>
     <div class="header-top">
       <div style="display:flex; align-items:center;">
         <span class="logo">🪵 SEMA FURNITURE</span>
@@ -69,7 +61,6 @@
     <div class="subtext">Staff Attendance, Advances & Client Billing</div>
   </header>
 
-  <!-- 4 Evenly Spaced Tabs Designed for Mobile -->
   <nav class="tab-bar">
     <button class="tab-btn active" id="btn-daily" onclick="openTab('daily')">Daily<br>Entry</button>
     <button class="tab-btn" id="btn-billing" onclick="openTab('billing')">Client<br>Bill</button>
@@ -143,7 +134,7 @@
         <div id="clientStatementArea">
           <div style="border-bottom:2px solid #78350f; padding-bottom:8px; margin-bottom:8px;">
             <h3 style="font-size:16px; color:#78350f; font-weight:900;">SEMA FURNITURE</h3>
-[02-10-2026 08:56 PM] Jaskarandeep Singh: <p style="font-size:11px; color:#78716c;">Proprietor: Sewak Singh</p>
+            <p style="font-size:11px; color:#78716c;">Proprietor: Sewak Singh</p>
             <p style="font-size:11px; font-weight:bold; margin-top:4px;">Site: <span id="lblClientSite"></span></p>
             <p style="font-size:11px; color:#78716c;">Period: <span id="lblClientPeriod"></span></p>
           </div>
@@ -158,8 +149,7 @@
             </thead>
             <tbody id="tblClientBody"></tbody>
           </table>
-
-          <div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
+[02-10-2026 09:03 PM] Jaskarandeep Singh: <div style="margin-top:12px; padding:10px; background:#fef3c7; border-radius:6px;">
             <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
               <span>Total Shifts Deployed:</span>
               <span id="lblTotalShifts">0</span>
@@ -233,15 +223,15 @@
             <span>₹<span id="lblNetPayable">0</span></span>
           </div>
         </div>
-[02-10-2026 08:56 PM] Jaskarandeep Singh: <button class="btn-dark" style="margin-top:10px;" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+        <button class="btn-dark" style="margin-top:10px;" onclick="window.print()">🖨️ Print / Save as PDF</button>
       </div>
     </div>
 
     <!-- 4. MANAGE SETUP & GOOGLE SHEETS -->
     <div id="section-manage" class="hidden">
-      <!-- Google Cloud Sync Box -->
       <div class="card" style="background:#ecfdf5; border-color:#a7f3d0;">
-        <div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
+[02-10-2026 09:03 PM] Jaskarandeep Singh: <div class="card-title" style="color:#065f46;">☁️ Google Sheets Cloud Sync</div>
         <p style="font-size:11px; color:#047857; margin-bottom:8px;">
           Paste your Google Web App URL below to automatically save all attendance entries to your Google Sheet.
         </p>
@@ -250,7 +240,6 @@
         <p id="cloudSyncStatus" style="font-size:11px; font-weight:bold; margin-top:6px; color:#047857;"></p>
       </div>
 
-      <!-- Add Worker -->
       <div class="card">
         <div class="card-title">Add Staff Worker</div>
         <div class="form-group">
@@ -263,7 +252,6 @@
         <div id="staffListPills" style="margin-top:8px;"></div>
       </div>
 
-      <!-- Add Site -->
       <div class="card">
         <div class="card-title">Add Client Site</div>
         <div class="form-group">
@@ -280,8 +268,7 @@
   </div>
 
   <script>
-    // State initialization
-    let db = {
+    var db = {
       cloudUrl: '',
       staff: [
         { name: 'Ramesh Carpenter', wage: 900 },
@@ -296,9 +283,9 @@
     };
 
     try {
-      const saved = localStorage.getItem('semaDb');
+      var saved = localStorage.getItem('semaDb');
       if (saved) db = JSON.parse(saved);
-    } catch(e) { console.log(e); }
+    } catch(e) {}
 
     function saveDb() {
       try {
@@ -308,80 +295,97 @@
     }
 
     function openTab(tabName) {
-      ['daily', 'billing', 'khata', 'manage'].forEach(t => {
-        document.getElementById('section-' + t).classList.toggle('hidden', t !== tabName);
-        document.getElementById('btn-' + t).classList.toggle('active', t !== tabName);
-      });
-      document.getElementById('btn-' + tabName).classList.add('active');
+      var tabs = ['daily', 'billing', 'khata', 'manage'];
+      for (var i = 0; i < tabs.length; i++) {
+        var t = tabs[i];
+        var sec = document.getElementById('section-' + t);
+        var btn = document.getElementById('btn-' + t);
+        if (sec) sec.className = (t === tabName) ? '' : 'hidden';
+        if (btn) btn.className = (t === tabName) ? 'tab-btn active' : 'tab-btn';
+      }
     }
 
     function renderAll() {
-      // Set today's date
-      if (!document.getElementById('workDate').value) {
-        document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
+      var dateField = document.getElementById('workDate');
+      if (dateField && !dateField.value) {
+        dateField.value = new Date().toISOString().split('T')[0];
       }
 
-      // Populate sites
-      const siteHtml = db.sites.map(s => <option value="${s.name}">${s.name}</option>).join('');
+      var siteHtml = '';
+      for (var i = 0; i < db.sites.length; i++) {
+        siteHtml += '<option value="' + db.sites[i].name + '">' + db.sites[i].name + '</option>';
+      }
       document.getElementById('workSite').innerHTML = siteHtml || '<option>No sites added</option>';
       document.getElementById('billSite').innerHTML = siteHtml || '<option>No sites added</option>';
 
-      // Populate khata staff
-      document.getElementById('khataStaff').innerHTML = db.staff.map(s => <option value="${s.name}">${s.name}</option>).join('');
-[02-10-2026 08:56 PM] Jaskarandeep Singh: // Populate attendance checklist
-      const chk = document.getElementById('staffChecklist');
+      var staffHtml = '';
+      for (var j = 0; j < db.staff.length; j++) {
+        staffHtml += '<option value="' + db.staff[j].name + '">' + db.staff[j].name + '</option>';
+      }
+      document.getElementById('khataStaff').innerHTML = staffHtml || '<option>No staff added</option>';
+
+      var chk = document.getElementById('staffChecklist');
       if (db.staff.length === 0) {
         chk.innerHTML = '<p style="padding:10px; font-size:12px; color:#888;">No staff registered yet.</p>';
-      } else {
-        chk.innerHTML = db.staff.map((s, idx) => 
-          <div class="worker-row">
-            <label class="worker-label">
-              <input type="checkbox" id="chkStaff_${idx}" value="${s.name}" class="staff-cb" />
-              <span>${s.name}</span>
-            </label>
-            <div class="worker-controls">
-              <select id="shiftStaff_${idx}">
-                <option value="1">1 Day</option>
-                <option value="0.5">½ Day</option>
-                <option value="1.5">1.5 OT</option>
-              </select>
-              <input type="number" id="advStaff_${idx}" placeholder="Adv ₹" />
-            </div>
-          </div>
-        ).join('');
+[02-10-2026 09:03 PM] Jaskarandeep Singh: } else {
+        var chkHtml = '';
+        for (var k = 0; k < db.staff.length; k++) {
+          var s = db.staff[k];
+          chkHtml += '<div class="worker-row">' +
+            '<label class="worker-label">' +
+              '<input type="checkbox" id="chkStaff_' + k + '" value="' + s.name + '" class="staff-cb" />' +
+              '<span>' + s.name + '</span>' +
+            '</label>' +
+            '<div class="worker-controls">' +
+              '<select id="shiftStaff_' + k + '">' +
+                '<option value="1">1 Day</option>' +
+                '<option value="0.5">½ Day</option>' +
+                '<option value="1.5">1.5 OT</option>' +
+              '</select>' +
+              '<input type="number" id="advStaff_' + k + '" placeholder="Adv ₹" />' +
+            '</div>' +
+          '</div>';
+        }
+        chk.innerHTML = chkHtml;
       }
 
-      // Pills in manage
-      document.getElementById('staffListPills').innerHTML = db.staff.map((s, idx) => 
-        <span class="badge-pill">
-          ${s.name} (₹${s.wage}/d)
-          <b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteStaff(${idx})">&times;</b>
-        </span>
-      ).join('');
+      var staffPills = '';
+      for (var m = 0; m < db.staff.length; m++) {
+        staffPills += '<span class="badge-pill">' + db.staff[m].name + ' (₹' + db.staff[m].wage + '/d)' +
+          '<b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteStaff(' + m + ')">&times;</b></span>';
+      }
+      document.getElementById('staffListPills').innerHTML = staffPills;
 
-      document.getElementById('siteListPills').innerHTML = db.sites.map((s, idx) => 
-        <span class="badge-pill">
-          ${s.name} (₹${s.rate}/shift)
-          <b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteSite(${idx})">&times;</b>
-        </span>
-      ).join('');
+      var sitePills = '';
+      for (var n = 0; n < db.sites.length; n++) {
+        sitePills += '<span class="badge-pill">' + db.sites[n].name + ' (₹' + db.sites[n].rate + '/shift)' +
+          '<b style="cursor:pointer; color:#dc2626; margin-left:4px;" onclick="deleteSite(' + n + ')">&times;</b></span>';
+      }
+      document.getElementById('siteListPills').innerHTML = sitePills;
 
-      // Recent logs
-      const r = [...db.logs].reverse().slice(0, 5);
-      document.getElementById('recentLogs').innerHTML = r.length ? r.map(l => 
-        <div style="padding:6px 0; border-bottom:1px solid #eee;">
-          <b>${l.date}</b>: ${l.staff} @ ${l.site} (${l.shift} shift)
-          ${Number(l.advance) > 0 ? <span style="color:#dc2626; font-weight:bold; margin-left:4px;">Adv ₹${l.advance}</span> : ''}
-        </div>
-      ).join('') : '<p style="color:#888;">No entries recorded yet.</p>';
+      var recentLogs = document.getElementById('recentLogs');
+      var r = db.logs.slice(-5).reverse();
+      if (r.length === 0) {
+        recentLogs.innerHTML = '<p style="color:#888;">No entries recorded yet.</p>';
+      } else {
+        var logsHtml = '';
+        for (var p = 0; p < r.length; p++) {
+          var l = r[p];
+          logsHtml += '<div style="padding:6px 0; border-bottom:1px solid #eee;">' +
+            '<b>' + l.date + '</b>: ' + l.staff + ' @ ' + l.site + ' (' + l.shift + ' shift)' +
+            (Number(l.advance) > 0 ? '<span style="color:#dc2626; font-weight:bold; margin-left:4px;">Adv ₹' + l.advance + '</span>' : '') +
+          '</div>';
+        }
+        recentLogs.innerHTML = logsHtml;
+      }
 
-      // Google cloud status
       document.getElementById('cloudUrlInput').value = db.cloudUrl || '';
       document.getElementById('cloudSyncStatus').textContent = db.cloudUrl ? '✅ Connected to Google Sheets' : '⚠️ Cloud sync link not set';
     }
 
     function selectAllStaff(val) {
-      document.querySelectorAll('.staff-cb').forEach(cb => cb.checked = val);
+      var cbs = document.querySelectorAll('.staff-cb');
+      for (var i = 0; i < cbs.length; i++) cbs[i].checked = val;
     }
 
     function saveCloudUrl() {
@@ -391,28 +395,28 @@
     }
 
     function saveAttendance() {
-      const date = document.getElementById('workDate').value;
-      const site = document.getElementById('workSite').value;
-      const note = document.getElementById('workNote').value.trim();
+      var date = document.getElementById('workDate').value;
+      var site = document.getElementById('workSite').value;
+      var note = document.getElementById('workNote').value.trim();
 
       if (!site || site === 'No sites added') {
         alert("Please add a client site first.");
         return;
       }
 
-      const batch = [];
-      db.staff.forEach((s, idx) => {
-        const cb = document.getElementById('chkStaff_' + idx);
+      var batch = [];
+      for (var i = 0; i < db.staff.length; i++) {
+        var cb = document.getElementById('chkStaff_' + i);
         if (cb && cb.checked) {
-          const shift = parseFloat(document.getElementById('shiftStaff_' + idx).value) || 1;
-          const advance = parseFloat(document.getElementById('advStaff_' + idx).value) || 0;
-          const entry = { date, staff: s.name, site, shift, advance, note };
+          var shift = parseFloat(document.getElementById('shiftStaff_' + i).value) || 1;
+          var advance = parseFloat(document.getElementById('advStaff_' + i).value) || 0;
+          var entry = { date: date, staff: db.staff[i].name, site: site, shift: shift, advance: advance, note: note };
           db.logs.push(entry);
           batch.push(entry);
           cb.checked = false;
-          document.getElementById('advStaff_' + idx).value = '';
+          document.getElementById('advStaff_' + i).value = '';
         }
-      });
+      }
 
       if (batch.length === 0) {
         alert("Please select at least one worker present.");
@@ -421,24 +425,23 @@
 
       document.getElementById('workNote').value = '';
       saveDb();
-
-      // Send to Google Sheets
-      if (db.cloudUrl) {
+[02-10-2026 09:03 PM] Jaskarandeep Singh: if (db.cloudUrl) {
         fetch(db.cloudUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ entries: batch })
-        }).catch(e => console.log(e));
+        }).catch(function(e) {});
       }
-[02-10-2026 08:56 PM] Jaskarandeep Singh: alert("Saved attendance for " + batch.length + " staff!");
+
+      alert("Saved attendance for " + batch.length + " staff!");
     }
 
     function addStaff() {
-      const name = document.getElementById('addWorkerName').value.trim();
-      const wage = Number(document.getElementById('addWorkerWage').value) || 0;
+      var name = document.getElementById('addWorkerName').value.trim();
+      var wage = Number(document.getElementById('addWorkerWage').value) || 0;
       if (!name) return;
-      db.staff.push({ name, wage });
+      db.staff.push({ name: name, wage: wage });
       document.getElementById('addWorkerName').value = '';
       document.getElementById('addWorkerWage').value = '';
       saveDb();
@@ -450,10 +453,10 @@
     }
 
     function addSite() {
-      const name = document.getElementById('addSiteName').value.trim();
-      const rate = Number(document.getElementById('addSiteRate').value) || 0;
+      var name = document.getElementById('addSiteName').value.trim();
+      var rate = Number(document.getElementById('addSiteRate').value) || 0;
       if (!name) return;
-      db.sites.push({ name, rate });
+      db.sites.push({ name: name, rate: rate });
       document.getElementById('addSiteName').value = '';
       document.getElementById('addSiteRate').value = '';
       saveDb();
@@ -464,84 +467,105 @@
       saveDb();
     }
 
-    // Client billing
-    let clientReport = null;
+    var clientReport = null;
     function calculateClientBill() {
-      const site = document.getElementById('billSite').value;
-      const from = document.getElementById('billFrom').value;
-      const to = document.getElementById('billTo').value;
+      var site = document.getElementById('billSite').value;
+      var from = document.getElementById('billFrom').value;
+      var to = document.getElementById('billTo').value;
 
       if (!site  !from  !to) {
         alert("Select site and both dates.");
         return;
       }
 
-      const siteObj = db.sites.find(s => s.name === site);
-      const shiftRate = siteObj ? siteObj.rate : 0;
-      const entries = db.logs.filter(l => l.site === site && l.date >= from && l.date <= to);
+      var shiftRate = 0;
+      for (var s = 0; s < db.sites.length; s++) {
+        if (db.sites[s].name === site) shiftRate = db.sites[s].rate;
+      }
 
-      const dateMap = {};
-      entries.forEach(e => {
-        if (!dateMap[e.date]) dateMap[e.date] = [];
-        dateMap[e.date].push(e);
-      });
+      var dateMap = {};
+      for (var i = 0; i < db.logs.length; i++) {
+        var l = db.logs[i];
+        if (l.site === site && l.date >= from && l.date <= to) {
+          if (!dateMap[l.date]) dateMap[l.date] = [];
+          dateMap[l.date].push(l);
+        }
+      }
 
-      let totalShifts = 0;
-      let rowsHtml = '';
-      Object.keys(dateMap).sort().forEach(dt => {
-        const workers = dateMap[dt];
-        const dayShifts = workers.reduce((sum, w) => sum + w.shift, 0);
+      var totalShifts = 0;
+      var rowsHtml = '';
+      var dates = Object.keys(dateMap).sort();
+      for (var d = 0; d < dates.length; d++) {
+        var dt = dates[d];
+        var workers = dateMap[dt];
+        var dayShifts = 0;
+        var names = [];
+        for (var w = 0; w < workers.length; w++) {
+          dayShifts += workers[w].shift;
+          names.push(workers[w].staff);
+        }
         totalShifts += dayShifts;
-        rowsHtml += 
-          <tr>
-            <td>${dt}</td>
-            <td><b>${workers.length} workers</b> (${dayShifts} shift)</td>
-            <td>${workers.map(w => w.staff).join(', ')}</td>
-          </tr>
-        ;
-      });
+        rowsHtml += '<tr><td>' + dt + '</td><td><b>' + workers.length + ' workers</b> (' + dayShifts + ' shift)</td><td>' + names.join(', ') + '</td></tr>';
+      }
 
-      const totalPayment = totalShifts * shiftRate;
-      clientReport = { site, from, to, totalShifts, totalPayment, dateMap };
+      var totalPayment = totalShifts * shiftRate;
+      clientReport = { site: site, from: from, to: to, totalShifts: totalShifts, totalPayment: totalPayment, dateMap: dateMap };
 
       document.getElementById('lblClientSite').textContent = site;
       document.getElementById('lblClientPeriod').textContent = from + ' to ' + to;
       document.getElementById('tblClientBody').innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
       document.getElementById('lblTotalShifts').textContent = totalShifts;
       document.getElementById('lblClientTotal').textContent = totalPayment.toLocaleString('en-IN');
-      document.getElementById('clientResultBox').classList.remove('hidden');
+      document.getElementById('clientResultBox').className = 'card';
     }
 
     function whatsappClientBill() {
       if (!clientReport) return;
-      let msg = "*SEMA FURNITURE - SITE STATEMENT*\nSite: *" + clientReport.site + "*\nPeriod: " + clientReport.from + " to " + clientReport.to + "\n\n*Date-Wise Attendance:*\n";
-      Object.keys(clientReport.dateMap).sort().forEach(dt => {
-        const w = clientReport.dateMap[dt];
-        msg += "• " + dt + ": " + w.length + " staff (" + w.map(x => x.staff).join(', ') + ")\n";
-      });
+      var msg = "*SEMA FURNITURE - SITE STATEMENT*\nSite: *" + clientReport.site + "*\nPeriod: " + clientReport.from + " to " + clientReport.to + "\n\n*Date-Wise Attendance:*\n";
+      var dates = Object.keys(clientReport.dateMap).sort();
+      for (var i = 0; i < dates.length; i++) {
+        var dt = dates[i];
+        var w = clientReport.dateMap[dt];
+        var staffNames = [];
+[02-10-2026 09:03 PM] Jaskarandeep Singh: for (var j = 0; j < w.length; j++) staffNames.push(w[j].staff);
+        msg += "• " + dt + ": " + w.length + " staff (" + staffNames.join(', ') + ")\n";
+      }
       msg += "\nTotal Shifts: *" + clientReport.totalShifts + "*\n*Total Due: ₹" + clientReport.totalPayment.toLocaleString('en-IN') + "*";
       window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
     }
 
-    // Staff settlement
     function calculateStaffKhata() {
-      const staff = document.getElementById('khataStaff').value;
-      const from = document.getElementById('khataFrom').value;
-      const to = document.getElementById('khataTo').value;
+      var staff = document.getElementById('khataStaff').value;
+      var from = document.getElementById('khataFrom').value;
+      var to = document.getElementById('khataTo').value;
 
       if (!staff  !from  !to) {
         alert("Select staff and both dates.");
         return;
       }
-[02-10-2026 08:56 PM] Jaskarandeep Singh: const staffObj = db.staff.find(s => s.name === staff);
-      const wage = staffObj ? staffObj.wage : 0;
-      const entries = db.logs.filter(l => l.staff === staff && l.date >= from && l.date <= to);
 
-      const totalDays = entries.reduce((sum, e) => sum + e.shift, 0);
-      const gross = totalDays * wage;
-      const advEntries = entries.filter(e => Number(e.advance) > 0);
-      const totalAdv = advEntries.reduce((sum, e) => sum + Number(e.advance), 0);
-      const net = gross - totalAdv;
+      var wage = 0;
+      for (var s = 0; s < db.staff.length; s++) {
+        if (db.staff[s].name === staff) wage = db.staff[s].wage;
+      }
+
+      var totalDays = 0;
+      var totalAdv = 0;
+      var advHtml = '';
+
+      for (var i = 0; i < db.logs.length; i++) {
+        var l = db.logs[i];
+        if (l.staff === staff && l.date >= from && l.date <= to) {
+          totalDays += l.shift;
+          if (Number(l.advance) > 0) {
+            totalAdv += Number(l.advance);
+            advHtml += '<tr><td>' + l.date + '</td><td>' + l.site + '</td><td style="color:#dc2626; font-weight:bold;">₹' + l.advance + '</td></tr>';
+          }
+        }
+      }
+
+      var gross = totalDays * wage;
+      var net = gross - totalAdv;
 
       document.getElementById('lblWorkerName').textContent = staff + " (₹" + wage + "/day)";
       document.getElementById('lblKhataPeriod').textContent = from + ' to ' + to;
@@ -549,20 +573,13 @@
       document.getElementById('lblGrossEarned').textContent = gross.toLocaleString('en-IN');
       document.getElementById('lblTotalAdvances').textContent = totalAdv.toLocaleString('en-IN');
       document.getElementById('lblNetPayable').textContent = net.toLocaleString('en-IN');
-
-      document.getElementById('tblAdvancesBody').innerHTML = advEntries.length ? advEntries.map(a => 
-        <tr>
-          <td>${a.date}</td>
-          <td>${a.site}</td>
-          <td style="color:#dc2626; font-weight:bold;">₹${a.advance}</td>
-        </tr>
-      ).join('') : '<tr><td colspan="3" style="color:#888;">No advances taken.</td></tr>';
-
-      document.getElementById('khataResultBox').classList.remove('hidden');
+      document.getElementById('tblAdvancesBody').innerHTML = advHtml || '<tr><td colspan="3" style="color:#888;">No advances taken.</td></tr>';
+      document.getElementById('khataResultBox').className = 'card';
     }
 
-    // Initialize immediately
-    renderAll();
+    window.onload = function() {
+      renderAll();
+    };
   </script>
 </body>
 </html>
