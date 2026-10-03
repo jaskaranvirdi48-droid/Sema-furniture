@@ -12,7 +12,7 @@
     .title { font-size: 18px; font-weight: bold; }
     .sub { font-size: 11px; color: #fde68a; }
     .nav { display: flex; background: #fff; border-bottom: 2px solid #ddd; }
-    .nav button { flex: 1; padding: 12px 2px; font-size: 12px; font-weight: bold; border: none; background: none; color: #666; border-bottom: 3px solid transparent; }
+    .nav button { flex: 1; padding: 12px 2px; font-size: 12px; font-weight: bold; border: none; background: none; color: #666; border-bottom: 3px solid transparent; cursor: pointer; }
     .nav button.active { color: #78350f; border-bottom: 3px solid #78350f; background: #fafaf9; }
     .container { max-width: 500px; margin: 0 auto; padding: 12px; }
     .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
@@ -186,71 +186,76 @@
     };
 
     try {
-      var saved = localStorage.getItem('sema_data_v3');
+      var saved = localStorage.getItem('sema_data_final');
       if (saved) data = JSON.parse(saved);
     } catch(e) {}
 
     function persist() {
-      try { localStorage.setItem('sema_data_v3', JSON.stringify(data)); } catch(e) {}
+      try { localStorage.setItem('sema_data_final', JSON.stringify(data)); } catch(e) {}
       refresh();
     }
 
     function showTab(t) {
-      ['daily', 'bill', 'khata', 'manage'].forEach(function(tab) {
-        document.getElementById('v-' + tab).className = (tab === t) ? '' : 'hidden';
-        document.getElementById('b-' + tab).className = (tab === t) ? 'active' : '';
-      });
+      var tabs = ['daily', 'bill', 'khata', 'manage'];
+      for (var i = 0; i < tabs.length; i++) {
+        var tab = tabs[i];
+        var view = document.getElementById('v-' + tab);
+        var btn = document.getElementById('b-' + tab);
+        if (view) view.className = (tab === t) ? '' : 'hidden';
+        if (btn) btn.className = (tab === t) ? 'active' : '';
+      }
     }
 
     function refresh() {
-      // Set today's date automatically
       var d = document.getElementById('inDate');
       if (d && !d.value) {
         d.value = new Date().toISOString().split('T')[0];
       }
 
-      // Site dropdowns
       var siteHtml = '';
       for (var i = 0; i < data.sites.length; i++) {
         siteHtml += '<option value="' + data.sites[i].name + '">' + data.sites[i].name + '</option>';
       }
-      document.getElementById('inSite').innerHTML = siteHtml || '<option>No sites</option>';
-      document.getElementById('billSite').innerHTML = siteHtml || '<option>No sites</option>';
+      var inSite = document.getElementById('inSite');
+      var billSite = document.getElementById('billSite');
+      if (inSite) inSite.innerHTML = siteHtml || '<option>No sites</option>';
+      if (billSite) billSite.innerHTML = siteHtml || '<option>No sites</option>';
 
-      // Staff dropdown
       var staffHtml = '';
       for (var j = 0; j < data.staff.length; j++) {
         staffHtml += '<option value="' + data.staff[j].name + '">' + data.staff[j].name + '</option>';
       }
-      document.getElementById('kStaff').innerHTML = staffHtml || '<option>No staff</option>';
+      var kStaff = document.getElementById('kStaff');
+      if (kStaff) kStaff.innerHTML = staffHtml || '<option>No staff</option>';
 
-      // Worker checklist
       var wList = document.getElementById('workerList');
-      var chkHtml = '';
-      for (var k = 0; k < data.staff.length; k++) {
-        chkHtml += '<div class="worker-row">' +
-          '<label><input type="checkbox" id="w_chk_' + k + '" value="' + data.staff[k].name + '"> ' + data.staff[k].name + '</label>' +
-          '<div class="worker-inputs">' +
-            '<select id="w_shift_' + k + '"><option value="1">1</option><option value="0.5">½</option><option value="1.5">1.5</option></select>' +
-            '<input type="number" id="w_adv_' + k + '" placeholder="Adv ₹">' +
-          '</div>' +
-        '</div>';
+      if (wList) {
+        var chkHtml = '';
+        for (var k = 0; k < data.staff.length; k++) {
+          chkHtml += '<div class="worker-row">' +
+            '<label><input type="checkbox" id="w_chk_' + k + '" value="' + data.staff[k].name + '"> ' + data.staff[k].name + '</label>' +
+            '<div class="worker-inputs">' +
+              '<select id="w_shift_' + k + '"><option value="1">1</option><option value="0.5">½</option><option value="1.5">1.5</option></select>' +
+              '<input type="number" id="w_adv_' + k + '" placeholder="Adv ₹">' +
+            '</div>' +
+          '</div>';
+        }
+        wList.innerHTML = chkHtml || '<p style="color:#888; font-size:12px;">No workers added.</p>';
       }
-      wList.innerHTML = chkHtml || '<p style="color:#888; font-size:12px;">No workers added.</p>';
-
-      // Manage pills
       var sp = '';
       for (var m = 0; m < data.staff.length; m++) {
         sp += '<span class="pill">' + data.staff[m].name + ' (₹' + data.staff[m].wage + ') <b style="color:red;cursor:pointer" onclick="delStaff(' + m + ')">✕</b></span>';
       }
-      document.getElementById('pillsStaff').innerHTML = sp;
+      var ps = document.getElementById('pillsStaff');
+      if (ps) ps.innerHTML = sp;
+
       var st = '';
       for (var n = 0; n < data.sites.length; n++) {
         st += '<span class="pill">' + data.sites[n].name + ' (₹' + data.sites[n].rate + ') <b style="color:red;cursor:pointer" onclick="delSite(' + n + ')">✕</b></span>';
       }
-      document.getElementById('pillsSites').innerHTML = st;
+      var psi = document.getElementById('pillsSites');
+      if (psi) psi.innerHTML = st;
 
-      // Recent logs
       var r = data.logs.slice(-5).reverse();
       var lHtml = '';
       for (var x = 0; x < r.length; x++) {
@@ -259,8 +264,11 @@
           (Number(r[x].adv) > 0 ? ' <span style="color:red; font-weight:bold;">Adv: ₹' + r[x].adv + '</span>' : '') +
         '</div>';
       }
-      document.getElementById('logList').innerHTML = lHtml || '<p style="color:#999;">No logs yet.</p>';
-      document.getElementById('sheetUrl').value = data.url || '';
+      var ll = document.getElementById('logList');
+      if (ll) ll.innerHTML = lHtml || '<p style="color:#999;">No logs yet.</p>';
+      
+      var su = document.getElementById('sheetUrl');
+      if (su) su.value = data.url || '';
     }
 
     function saveData() {
@@ -338,7 +346,6 @@
       var from = document.getElementById('billFrom').value;
       var to = document.getElementById('billTo').value;
       if (!site  !from  !to) { alert("Select site and dates."); return; }
-
       var rate = 0;
       for (var s = 0; s < data.sites.length; s++) {
         if (data.sites[s].name === site) rate = data.sites[s].rate;
@@ -352,6 +359,7 @@
           map[l.date].push(l);
         }
       }
+
       var totalShifts = 0;
       var h = '';
       var dates = Object.keys(map).sort();
@@ -424,7 +432,6 @@
       document.getElementById('khataBox').className = 'card';
     }
 
-    // Run automatically
     refresh();
   </script>
 </body>
