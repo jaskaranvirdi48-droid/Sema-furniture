@@ -345,7 +345,7 @@
       var site = document.getElementById('billSite').value;
       var from = document.getElementById('billFrom').value;
       var to = document.getElementById('billTo').value;
-      if (!site  !from  !to) { alert("Select site and dates."); return; }
+      if (!site || !from || !to) { alert("Select site and dates."); return; }
       var rate = 0;
       for (var s = 0; s < data.sites.length; s++) {
         if (data.sites[s].name === site) rate = data.sites[s].rate;
@@ -400,7 +400,7 @@
       var staff = document.getElementById('kStaff').value;
       var from = document.getElementById('kFrom').value;
       var to = document.getElementById('kTo').value;
-      if (!staff  !from  !to) { alert("Select staff and dates."); return; }
+      if (!staff || !from || !to) { alert("Select staff and dates."); return; }
 
       var wage = 0;
       for (var s = 0; s < data.staff.length; s++) {
