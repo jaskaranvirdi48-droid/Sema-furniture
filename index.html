@@ -480,7 +480,7 @@ function downloadInvoicePDF() {
   if (!lastBill) { alert("Please compute a bill first."); return; }
   var printWin = window.open('', '', 'width=700,height=800');
   var tableHtml = document.getElementById('bRows').innerHTML;
-  var content = 
+  var content = ` 
     <html>
     <head>
       <title>Invoice - ${lastBill.site}</title>
