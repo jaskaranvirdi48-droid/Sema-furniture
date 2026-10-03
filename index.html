@@ -68,6 +68,15 @@
         <input type="text" id="inNote" placeholder="e.g. Wardrobe framing" />
 
         <button class="btn-main" onclick="saveData()">💾 Save Attendance</button>
+        <hr style="margin:14px 0; border:0; border-top:1px dashed #ccc;">
+<div style="font-size:12px; font-weight:bold; color:#78350f; margin-bottom:6px;">⚡ Single Day / Custom Site Entry</div>
+<input type="text" id="customSite" placeholder="Custom Site Name (e.g. Sector 14 repair)">
+<input type="text" id="customStaff" placeholder="Worker Name">
+<div style="display:flex; gap:6px;">
+  <input type="number" id="customShift" placeholder="Shifts (e.g. 1)" value="1" style="flex:1;">
+  <input type="number" id="customAdv" placeholder="Advance ₹" style="flex:1;">
+</div>
+<button class="btn-dark" onclick="saveSingleEntry()">+ Save Single Day Entry</button>
       </div>
 
       <div class="card">
@@ -111,6 +120,7 @@
           </div>
         </div>
         <button class="btn-green" onclick="sendBillWhatsApp()">💬 Send on WhatsApp</button>
+        <button class="btn-dark" onclick="downloadInvoicePDF()">📄 Download / Print Invoice</button>
       </div>
     </div>
 
@@ -432,7 +442,81 @@
       document.getElementById('kRows').innerHTML = h || '<tr><td colspan="3">No advances.</td></tr>';
       document.getElementById('khataBox').className = 'card';
     }
+function saveSingleEntry() {
+  var dt = document.getElementById('inDate').value;
+  var site = document.getElementById('customSite').value.trim();
+  var staff = document.getElementById('customStaff').value.trim();
+  var shift = parseFloat(document.getElementById('customShift').value) || 1;
+  var adv = parseFloat(document.getElementById('customAdv').value) || 0;
+  var note = document.getElementById('inNote').value.trim();
 
+  if (!site || !staff) { alert("Enter both Site Name and Worker Name."); return; }
+
+  var entry = { date: dt, staff: staff, site: site, shift: shift, adv: adv, note: note };
+  data.logs.push(entry);
+
+  // Auto-add site to dropdown list if not present
+  var exists = data.sites.some(function(s){ return s.name === site; });
+  if (!exists) data.sites.push({ name: site, rate: 1200 });
+
+  persist();
+
+  if (data.url) {
+    fetch(data.url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({entries: [entry]})
+    }).catch(function(){});
+  }
+
+  document.getElementById('customSite').value = '';
+  document.getElementById('customStaff').value = '';
+  document.getElementById('customAdv').value = '';
+  alert("Single day entry saved!");
+}
+
+function downloadInvoicePDF() {
+  if (!lastBill) { alert("Please compute a bill first."); return; }
+  var printWin = window.open('', '', 'width=700,height=800');
+  var tableHtml = document.getElementById('bRows').innerHTML;
+  var content = 
+    <html>
+    <head>
+      <title>Invoice - ${lastBill.site}</title>
+      <style>
+        body { font-family: sans-serif; padding: 24px; color: #222; }
+        .hdr { border-bottom: 2px solid #78350f; padding-bottom: 8px; margin-bottom: 16px; }
+        .title { font-size: 20px; font-weight: bold; color: #78350f; }
+        table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
+        th { background: #f3f3f3; }
+        .total-box { margin-top: 16px; text-align: right; font-size: 16px; font-weight: bold; }
+      </style>
+    </head>
+    <body>
+      <div class="hdr">
+        <div class="title">SEMA FURNITURE</div>
+        <div>Prop: Sewak Singh | Invoice Statement</div>
+      </div>
+      <p><b>Client / Site:</b> ${lastBill.site}</p>
+      <p><b>Billing Period:</b> ${lastBill.from} to ${lastBill.to}</p>
+      <table>
+        <thead><tr><th>Date</th><th>Total Shifts</th><th>Workers</th></tr></thead>
+        <tbody>${tableHtml}</tbody>
+      </table>
+      <div class="total-box">
+        <p>Total Shifts: ${lastBill.totalShifts}</p>
+        <p style="color:#78350f;">Total Amount Due: ₹${lastBill.totalDue.toLocaleString('en-IN')}</p>
+      </div>
+      <script>window.onload = function() { window.print(); }<\/script>
+    </body>
+    </html>
+  `;
+  printWin.document.open();
+  printWin.document.write(content);
+  printWin.document.close();
+}
     refresh();
   </script>
 </body>
