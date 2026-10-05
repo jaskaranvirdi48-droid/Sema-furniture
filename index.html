@@ -443,14 +443,14 @@
           days += l.shift;
           if (Number(l.adv) > 0) {
             adv += Number(l.adv);
-            var originalIdx = data.logs.indexOf(l);
-h += `<tr>
-  <td>${l.date}</td>
-  <td>${l.site}</td>
-  <td>${l.shift}</td>
-  <td>₹${l.adv || 0}</td>
-  <td><button onclick="editEntry(${originalIdx})" style="padding:2px 6px; font-size:11px; background:#78350f; color:#fff; border:none; border-radius:4px; cursor:pointer;">✏️ Edit</button></td>
-</tr>;
+            var origIdx = data.logs.indexOf(l);
+          h += `<tr>
+            <td>${l.date}</td>
+            <td>${l.site}</td>
+            <td>${l.shift}</td>
+            <td>₹${l.adv || 0}</td>
+            <td><button onclick="editEntry(${origIdx})" style="padding:2px 6px; font-size:11px; background:#78350f; color:#fff; border:none; border-radius:4px; cursor:pointer;">Edit</button></td>
+          </tr>`;
           }
         }
       }
