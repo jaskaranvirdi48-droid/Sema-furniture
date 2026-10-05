@@ -550,7 +550,7 @@ function downloadInvoicePDF() {
     '<p style="color:#78350f;">Total Amount Due: ' + (lastBill.totalDue ? ('₹' + lastBill.totalDue.toLocaleString('en-IN')) : '₹0') + '</p>' +
     '</div>' +
     '</body></html>';
-
+    
   printWin.document.open();
   printWin.document.write(content);
   printWin.document.close();
