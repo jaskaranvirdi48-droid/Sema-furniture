@@ -351,10 +351,10 @@
     }
 
     var lastBill = null;
-    function computeClientBill() {
-  var site = document.getElementById('bSite').value;
-  var from = document.getElementById('bFrom').value;
-  var to = document.getElementById('bTo').value;
+    function makeBill() {
+  var site = document.getElementById('billSite').value;
+  var from = document.getElementById('billFrom').value;
+  var to = document.getElementById('billTo').value;
 
   if (!site || !from || !to) { alert("Select site and dates."); return; }
 
@@ -362,7 +362,7 @@
   var wageMap = {};
   data.staff.forEach(function(s) { wageMap[s.name] = s.wage || 0; });
 
-  var filtered = data.logs.filter(function(l) {
+  var filtered = data.logs.filter(function(l) { .
     return l.site === site && l.date >= from && l.date <= to;
   });
 
