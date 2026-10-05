@@ -549,7 +549,6 @@ function downloadInvoicePDF() {
     '<p>Total Shifts: ' + lastBill.totalShifts + '</p>' +
     '<p style="color:#78350f;">Total Amount Due: ' + (lastBill.totalDue ? ('₹' + lastBill.totalDue.toLocaleString('en-IN')) : '₹0') + '</p>' +
     '</div>' +
-    '<' + 'script>window.onload = function() { window.print(); }<' + '/script>' +
     '</body></html>';
 
   printWin.document.open();
