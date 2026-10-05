@@ -522,44 +522,36 @@ function downloadInvoicePDF() {
   if (!lastBill) { alert("Please compute a bill first."); return; }
   var printWin = window.open('', '', 'width=700,height=800');
   var tableHtml = document.getElementById('bRows').innerHTML;
-  var content = ` 
-    <html>
-    <head>
-      <title>Invoice - ${lastBill.site}</title>
-      <style>
-        body { font-family: sans-serif; padding: 24px; color: #222; }
-        .hdr { border-bottom: 2px solid #78350f; padding-bottom: 8px; margin-bottom: 16px; }
-        .title { font-size: 20px; font-weight: bold; color: #78350f; }
-        table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
-        th { background: #f3f3f3; }
-        .total-box { margin-top: 16px; text-align: right; font-size: 16px; font-weight: bold; }
-      </style>
-    </head>
-    <body>
-      <div class="hdr">
-        <div class="title">SEMA FURNITURE</div>
-        <div>Prop: Sewak Singh | Invoice Statement</div>
-      </div>
-      <p><b>Client / Site:</b> ${lastBill.site}</p>
-      <p><b>Billing Period:</b> ${lastBill.from} to ${lastBill.to}</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Attendance Breakdown</th>
-            <th>Amount (₹)</th>
-          </tr>
-        </thead>
-        <tbody>${tableHtml}</tbody>
-      </table>
-      <div class="total-box">
-        <p>Total Shifts: ${lastBill.totalShifts}</p>
-        <p style="color:#78350f;">Total Amount Due: ₹${lastBill.totalDue.toLocaleString('en-IN')}</p>
-      </div>
-      <script>window.onload = function() { window.print(); }<\/script>
-    </body>
-    </html>`;
+
+  var content = '<!DOCTYPE html><html><head>' +
+    '<title>Invoice - ' + lastBill.site + '</title>' +
+    '<style>' +
+    'body { font-family: sans-serif; padding: 24px; color: #222; }' +
+    '.hdr { border-bottom: 2px solid #78350f; padding-bottom: 8px; margin-bottom: 16px; }' +
+    '.title { font-size: 20px; font-weight: bold; color: #78350f; }' +
+    'table { width: 100%; border-collapse: collapse; margin-top: 14px; }' +
+    'th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }' +
+    'th { background: #f3f3f3; }' +
+    '.total-box { margin-top: 16px; text-align: right; font-size: 16px; font-weight: bold; }' +
+    '</style>' +
+    '</head><body>' +
+    '<div class="hdr">' +
+    '<div class="title">SEMA FURNITURE</div>' +
+    '<div>Prop: Sewak Singh | Invoice Statement</div>' +
+    '</div>' +
+    '<p><b>Client / Site:</b> ' + lastBill.site + '</p>' +
+    '<p><b>Billing Period:</b> ' + lastBill.from + ' to ' + lastBill.to + '</p>' +
+    '<table>' +
+    '<thead><tr><th>Date</th><th>Attendance Breakdown</th><th>Amount (₹)</th></tr></thead>' +
+    '<tbody>' + tableHtml + '</tbody>' +
+    '</table>' +
+    '<div class="total-box">' +
+    '<p>Total Shifts: ' + lastBill.totalShifts + '</p>' +
+    '<p style="color:#78350f;">Total Amount Due: ' + (lastBill.totalDue ? ('₹' + lastBill.totalDue.toLocaleString('en-IN')) : '₹0') + '</p>' +
+    '</div>' +
+    '<' + 'script>window.onload = function() { window.print(); }<' + '/script>' +
+    '</body></html>';
+
   printWin.document.open();
   printWin.document.write(content);
   printWin.document.close();
