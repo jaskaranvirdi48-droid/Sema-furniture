@@ -390,11 +390,11 @@
   Object.keys(byDate).sort().forEach(function(d) {
     var item = byDate[d];
     // Shows attendance and shift count — staff names are kept private
-    rowsHtml += <tr>
+    rowsHtml += `<tr>
       <td>${d}</td>
       <td>${item.shifts} Shift(s) (${item.count} Workers)</td>
       <td>₹${item.cost.toLocaleString('en-IN')}</td>
-    </tr>;
+    </tr>`;
   });
 
   document.getElementById('bRows').innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
