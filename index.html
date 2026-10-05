@@ -400,7 +400,7 @@
   document.getElementById('bRows').innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
   document.getElementById('bTotalShifts').textContent = totalShifts;
   document.getElementById('bTotalDue').textContent = '₹' + totalAmount.toLocaleString('en-IN');
-  document.getElementById('billResult').style.display = 'block';
+  document.getElementById('billBox').style.display = 'block';
 
   lastBill = {
     site: site,
