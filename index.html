@@ -362,7 +362,7 @@
   var wageMap = {};
   data.staff.forEach(function(s) { wageMap[s.name] = s.wage || 0; });
 
-  var filtered = data.logs.filter(function(l) { .
+  var filtered = data.logs.filter(function(l) {
     return l.site === site && l.date >= from && l.date <= to;
   });
 
