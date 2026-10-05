@@ -180,7 +180,7 @@
       <div class="card">
         <div class="card-title">Add Client Site</div>
         <input type="text" id="newSite" placeholder="Site Name" />
-        <input type="number" id="newRate" placeholder="Shift Rate Charged to Client (e.g. 1200)" />
+        
         <button class="btn-dark" onclick="addSite()">Add Site</button>
         <div id="pillsSites" style="margin-top:8px;"></div>
       </div>
@@ -262,7 +262,7 @@
 
       var st = '';
       for (var n = 0; n < data.sites.length; n++) {
-        st += '<span class="pill">' + data.sites[n].name + ' (₹' + data.sites[n].rate + ') <b style="color:red;cursor:pointer" onclick="delSite(' + n + ')">✕</b></span>';
+        st += '<span class="pill">' + data.sites[n].name + ' <b style="color:red;cursor:pointer" onclick="delSite(' + n + ')">✕</b></span>';
       }
       var psi = document.getElementById('pillsSites');
       if (psi) psi.innerHTML = st;
@@ -334,14 +334,13 @@
     function delStaff(i) { data.staff.splice(i, 1); persist(); }
 
     function addSite() {
-      var name = document.getElementById('newSite').value.trim();
-      var rate = Number(document.getElementById('newRate').value) || 0;
-      if (!name) return;
-      data.sites.push({name: name, rate: rate});
-      document.getElementById('newSite').value = '';
-      document.getElementById('newRate').value = '';
-      persist();
-    }
+  var name = document.getElementById('siteName').value.trim();
+  if (!name) return;
+  data.sites.push({ name: name });
+  persist();
+  refresh();
+  document.getElementById('siteName').value = '';
+}
 
     function delSite(i) { data.sites.splice(i, 1); persist(); }
 
@@ -352,47 +351,66 @@
     }
 
     var lastBill = null;
-    function makeBill() {
-      var site = document.getElementById('billSite').value;
-      var from = document.getElementById('billFrom').value;
-      var to = document.getElementById('billTo').value;
-      if (!site || !from || !to) { alert("Select site and dates."); return; }
-      var rate = 0;
-      for (var s = 0; s < data.sites.length; s++) {
-        if (data.sites[s].name === site) rate = data.sites[s].rate;
-      }
+    function computeClientBill() {
+  var site = document.getElementById('bSite').value;
+  var from = document.getElementById('bFrom').value;
+  var to = document.getElementById('bTo').value;
 
-      var map = {};
-      for (var i = 0; i < data.logs.length; i++) {
-        var l = data.logs[i];
-        if (l.site === site && l.date >= from && l.date <= to) {
-          if (!map[l.date]) map[l.date] = [];
-          map[l.date].push(l);
-        }
-      }
+  if (!site || !from || !to) { alert("Select site and dates."); return; }
 
-      var totalShifts = 0;
-      var h = '';
-      var dates = Object.keys(map).sort();
-      for (var d = 0; d < dates.length; d++) {
-        var dt = dates[d];
-        var arr = map[dt];
-        var ds = 0; var names = [];
-        for (var k = 0; k < arr.length; k++) { ds += arr[k].shift; names.push(arr[k].staff); }
-        totalShifts += ds;
-        h += '<tr><td>' + dt + '</td><td>' + ds + '</td><td>' + names.join(', ') + '</td></tr>';
-      }
+  // Map worker wages for quick lookup
+  var wageMap = {};
+  data.staff.forEach(function(s) { wageMap[s.name] = s.wage || 0; });
 
-      var totalDue = totalShifts * rate;
-      lastBill = { site: site, from: from, to: to, totalShifts: totalShifts, totalDue: totalDue, map: map };
+  var filtered = data.logs.filter(function(l) {
+    return l.site === site && l.date >= from && l.date <= to;
+  });
 
-      document.getElementById('bSiteHead').textContent = site;
-      document.getElementById('bPeriod').textContent = from + ' to ' + to;
-      document.getElementById('bRows').innerHTML = h || '<tr><td colspan="3">No records found.</td></tr>';
-      document.getElementById('bTotalShifts').textContent = totalShifts;
-      document.getElementById('bTotalDue').textContent = totalDue.toLocaleString('en-IN');
-      document.getElementById('billBox').className = 'card';
+  // Group by date
+  var byDate = {};
+  var totalShifts = 0;
+  var totalAmount = 0;
+
+  filtered.forEach(function(l) {
+    if (!byDate[l.date]) {
+      byDate[l.date] = { count: 0, shifts: 0, cost: 0 };
     }
+    var shiftVal = parseFloat(l.shift) || 1;
+    var rate = wageMap[l.staff] || 0;
+    
+    byDate[l.date].count += 1;
+    byDate[l.date].shifts += shiftVal;
+    byDate[l.date].cost += (shiftVal * rate);
+
+    totalShifts += shiftVal;
+    totalAmount += (shiftVal * rate);
+  });
+
+  var rowsHtml = "";
+  Object.keys(byDate).sort().forEach(function(d) {
+    var item = byDate[d];
+    // Shows attendance and shift count — staff names are kept private
+    rowsHtml += <tr>
+      <td>${d}</td>
+      <td>${item.shifts} Shift(s) (${item.count} Workers)</td>
+      <td>₹${item.cost.toLocaleString('en-IN')}</td>
+    </tr>;
+  });
+
+  document.getElementById('bRows').innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
+  document.getElementById('bTotalShifts').textContent = totalShifts;
+  document.getElementById('bTotalDue').textContent = '₹' + totalAmount.toLocaleString('en-IN');
+  document.getElementById('billResult').style.display = 'block';
+
+  lastBill = {
+    site: site,
+    from: from,
+    to: to,
+    totalShifts: totalShifts,
+    totalDue: totalAmount,
+    breakdown: byDate
+  };
+}
 
     function sendBillWhatsApp() {
       if (!lastBill) return;
@@ -425,7 +443,14 @@
           days += l.shift;
           if (Number(l.adv) > 0) {
             adv += Number(l.adv);
-            h += '<tr><td>' + l.date + '</td><td>' + l.site + '</td><td style="color:red;font-weight:bold;">₹' + l.adv + '</td></tr>';
+            var originalIdx = data.logs.indexOf(l);
+h += `<tr>
+  <td>${l.date}</td>
+  <td>${l.site}</td>
+  <td>${l.shift}</td>
+  <td>₹${l.adv || 0}</td>
+  <td><button onclick="editEntry(${originalIdx})" style="padding:2px 6px; font-size:11px; background:#78350f; color:#fff; border:none; border-radius:4px; cursor:pointer;">✏️ Edit</button></td>
+</tr>;
           }
         }
       }
@@ -442,6 +467,23 @@
       document.getElementById('kRows').innerHTML = h || '<tr><td colspan="3">No advances.</td></tr>';
       document.getElementById('khataBox').className = 'card';
     }
+    function editEntry(index) {
+  var item = data.logs[index];
+  if (!item) return;
+
+  var newShift = prompt("Update shifts (e.g. 1, 1.5, 0.5):", item.shift);
+  if (newShift === null) return;
+
+  var newAdv = prompt("Update advance amount (₹):", item.adv || 0);
+  if (newAdv === null) return;
+
+  item.shift = parseFloat(newShift) || item.shift;
+  item.adv = parseFloat(newAdv) || 0;
+
+  persist();
+  computeKhata();
+  alert("Entry updated successfully!");
+}
 function saveSingleEntry() {
   var dt = document.getElementById('inDate').value;
   var site = document.getElementById('customSite').value.trim();
@@ -502,7 +544,13 @@ function downloadInvoicePDF() {
       <p><b>Client / Site:</b> ${lastBill.site}</p>
       <p><b>Billing Period:</b> ${lastBill.from} to ${lastBill.to}</p>
       <table>
-        <thead><tr><th>Date</th><th>Total Shifts</th><th>Workers</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Attendance Breakdown</th>
+            <th>Amount (₹)</th>
+          </tr>
+        </thead>
         <tbody>${tableHtml}</tbody>
       </table>
       <div class="total-box">
