@@ -397,11 +397,20 @@
     </tr>`;
   });
 
-  document.getElementById('bRows').innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
-  document.getElementById('bTotalShifts').textContent = totalShifts;
-  document.getElementById('bTotalDue').textContent = '₹' + totalAmount.toLocaleString('en-IN');
-  document.getElementById('billBox').style.display = 'block';
+  var bRowsEl = document.getElementById('bRows');
+    if (bRowsEl) bRowsEl.innerHTML = rowsHtml || '<tr><td colspan="3">No records found.</td></tr>';
 
+    var bShiftsEl = document.getElementById('bTotalShifts');
+    if (bShiftsEl) bShiftsEl.textContent = totalShifts;
+
+    var bDueEl = document.getElementById('bTotalDue');
+    if (bDueEl) bDueEl.textContent = '₹' + totalAmount.toLocaleString('en-IN');
+
+    var billBoxEl = document.getElementById('billBox');
+    if (billBoxEl) {
+      billBoxEl.classList.remove('hidden');
+      billBoxEl.style.display = 'block';
+    }
   lastBill = {
     site: site,
     from: from,
