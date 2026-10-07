@@ -334,15 +334,22 @@
     function delStaff(i) { data.staff.splice(i, 1); persist(); }
 
     function addSite() {
-  var name = document.getElementById('siteName').value.trim();
+  var el = document.getElementById('siteName');
+  if (!el) return;
+  var name = el.value.trim();
   if (!name) return;
-  data.sites.push(name);   
+  if (!data.sites) data.sites = [];
+  data.sites.push(name);
   persist();
   refresh();
-  document.getElementById('siteName').value = '';
+  el.value = '';
 }
 
-    function delSite(i) { data.sites.splice(i, 1); persist(); refresh(); }
+function delSite(i) {
+  data.sites.splice(i, 1);
+  persist();
+  refresh();
+}
 
     function saveUrl() {
       data.url = document.getElementById('sheetUrl').value.trim();
