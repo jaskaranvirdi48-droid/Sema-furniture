@@ -336,13 +336,13 @@
     function addSite() {
   var name = document.getElementById('siteName').value.trim();
   if (!name) return;
-  data.sites.push({ name: name });
+  data.sites.push(name);   
   persist();
   refresh();
   document.getElementById('siteName').value = '';
 }
 
-    function delSite(i) { data.sites.splice(i, 1); persist(); }
+    function delSite(i) { data.sites.splice(i, 1); persist(); refresh(); }
 
     function saveUrl() {
       data.url = document.getElementById('sheetUrl').value.trim();
