@@ -264,9 +264,12 @@
       if (ps) ps.innerHTML = sp;
 
       var st = '';
-      for (var n = 0; n < data.sites.length; n++) {
-        st += '<span class="pill">' + data.sites[n].name + ' <b style="color:red;cursor:pointer" onclick="delSite(' + n + ')">✕</b></span>';
+    for (var n = 0; n < data.sites.length; n++) {
+      var sName = typeof data.sites[n] === 'object' && data.sites[n] !== null ? data.sites[n].name : data.sites[n];
+      if (sName) {
+        st += '<span class="pill">' + sName + ' <b style="color:red;cursor:pointer;" onclick="delSite(' + n + ')">✕</b></span> ';
       }
+    }
       var psi = document.getElementById('pillsSites');
       if (psi) psi.innerHTML = st;
 
