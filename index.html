@@ -223,10 +223,13 @@
         d.value = new Date().toISOString().split('T')[0];
       }
 
-      var siteHtml = '';
-      for (var i = 0; i < data.sites.length; i++) {
-        siteHtml += '<option value="' + data.sites[i].name + '">' + data.sites[i].name + '</option>';
+          var siteHtml = '';
+    for (var i = 0; i < data.sites.length; i++) {
+      var sName = typeof data.sites[i] === 'object' && data.sites[i] !== null ? data.sites[i].name : data.sites[i];
+      if (sName) {
+        siteHtml += '<option value="' + sName + '">' + sName + '</option>';
       }
+    }
       var inSite = document.getElementById('inSite');
       var billSite = document.getElementById('billSite');
       if (inSite) inSite.innerHTML = siteHtml || '<option>No sites</option>';
