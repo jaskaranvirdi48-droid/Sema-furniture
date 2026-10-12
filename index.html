@@ -483,16 +483,26 @@ function delSite(i) {
     var totalAdvance = 0;
 
     filteredLogs.forEach(function(l) {
+      var logStaffName = l.staff  l.worker  l.name;
+      if (logStaffName === workerName) {
+        var shiftVal = l.shift !== undefined ? Number(l.shift) : 1;
+        var advVal = Number(l.advance  l.adv  0);
+
+        totalShifts += shiftVal;
+        if (shiftVal > 0) presentDays += 1;
+        totalAdvance += advVal;
+      }
+
       if (l.workers && Array.isArray(l.workers)) {
         l.workers.forEach(function(w) {
-          var name = typeof w === 'object' ? w.name : w;
-          if (name === workerName) {
-            var shiftVal = (typeof w === 'object' && w.shift !== undefined) ? Number(w.shift) : 1;
-            var advVal = (typeof w === 'object' && w.advance !== undefined) ? Number(w.advance) : 0;
+          var subName = typeof w === 'object' && w !== null ? (w.name || w.staff) : w;
+          if (subName === workerName) {
+            var subShift = typeof w === 'object' && w.shift !== undefined ? Number(w.shift) : 1;
+            var subAdv = typeof w === 'object' ? Number(w.advance  w.adv  0) : 0;
 
-            totalShifts += shiftVal;
-            if (shiftVal > 0) presentDays += 1;
-            totalAdvance += advVal;
+            totalShifts += subShift;
+            if (subShift > 0) presentDays += 1;
+            totalAdvance += subAdv;
           }
         });
       }
