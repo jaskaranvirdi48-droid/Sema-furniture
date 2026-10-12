@@ -521,7 +521,6 @@ function delSite(i) {
       <tr>
         <td style="border:1px solid #ddd; padding:8px; text-align:center;">${index + 1}</td>
         <td style="border:1px solid #ddd; padding:8px; font-weight:600;">${workerName}</td>
-        <td style="border:1px solid #ddd; padding:8px; text-align:center;">₹${dailyWage.toLocaleString('en-IN')}</td>
         <td style="border:1px solid #ddd; padding:8px; text-align:center;">${presentDays}</td>
         <td style="border:1px solid #ddd; padding:8px; text-align:center;">${totalShifts}</td>
         <td style="border:1px solid #ddd; padding:8px; text-align:right;">₹${totalEarned.toLocaleString('en-IN')}</td>
@@ -544,10 +543,10 @@ function delSite(i) {
     '<h2>SEMA FURNITURE — Staff Attendance & Wage Summary</h2>' +
     '<p>Period: <b>' + from + '</b> to <b>' + to + '</b></p>' +
     '<table><thead><tr>' +
-    '<th>#</th><th>Staff Name</th><th>Daily Wage</th><th>Present Days</th><th>Total Shifts</th><th>Total Earned</th><th>Advance Taken</th><th>Balance Due</th>' +
+    '<th>#</th><th>Staff Name</th><th>Present Days</th><th>Total Shifts</th><th>Total Earned</th><th>Advance Taken</th><th>Balance Due</th>' +
     '</tr></thead><tbody>' + rowsHtml + '</tbody>' +
     '<tfoot><tr>' +
-    '<td colspan="3" style="text-align:right;">Grand Totals:</td>' +
+    '<td colspan="2" style="text-align:right;">Grand Totals:</td>' +
     '<td style="text-align:center;">' + grandPresent + '</td>' +
     '<td style="text-align:center;">' + grandShifts + '</td>' +
     '<td style="text-align:right;">₹' + grandEarned.toLocaleString('en-IN') + '</td>' +
