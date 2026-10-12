@@ -119,8 +119,9 @@
             <span style="color:#78350f; font-size:15px;">Due: ₹<span id="bTotalDue">0</span></span>
           </div>
         </div>
-        <button class="btn-green" onclick="sendBillWhatsApp()">💬 Send on WhatsApp</button>
-        <button class="btn-dark" onclick="downloadInvoicePDF()">📄 Download / Print Invoice</button>
+        <button class="btn-green" onclick="shareInvoicePDF()">📤 Share PDF to WhatsApp</button>
+<button class="btn-dark" style="margin-top:8px;" onclick="downloadInvoicePDF()">📄 Download / Print Invoice</button>
+<button class="btn-dark" style="background:#4b5563; margin-top:8px;" onclick="sendBillWhatsAppText()">💬 Send Text Summary via WhatsApp</button>
       </div>
     </div>
 
@@ -442,18 +443,114 @@ function delSite(i) {
   };
 }
 
-    function sendBillWhatsApp() {
-      if (!lastBill) return;
-      var msg = "*SEMA FURNITURE - STATEMENT*\nSite: *" + lastBill.site + "*\nPeriod: " + lastBill.from + " to " + lastBill.to + "\n\n";
-      var dts = Object.keys(lastBill.map).sort();
-      for (var i = 0; i < dts.length; i++) {
-        var dt = dts[i];
-        var arr = lastBill.map[dt];
-        msg += "• " + dt + ": " + arr.length + " staff\n";
-      }
-      msg += "\nTotal Shifts: *" + lastBill.totalShifts + "*\n*Total Due: ₹" + lastBill.totalDue.toLocaleString('en-IN') + "*";
-      window.open("https://wa.me/?text=" + encodeURIComponent(msg), '_blank');
+    // Helper to generate the clean Invoice HTML document
+function generateInvoiceHtml() {
+  var site = document.getElementById('billSite').value;
+  var from = document.getElementById('billFrom').value;
+  var to = document.getElementById('billTo').value;
+  var bRows = document.getElementById('bRows').innerHTML;
+  var totalShifts = document.getElementById('bTotalShifts').innerText;
+  var totalDue = document.getElementById('bTotalDue').innerText;
+
+  return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+    '<title>Invoice - ' + site + '</title>' +
+    '<style>' +
+    'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 24px; color: #222; }' +
+    '.header { border-bottom: 2px solid #78350f; padding-bottom: 12px; margin-bottom: 16px; }' +
+    'h2 { margin: 0; color: #78350f; font-size: 20px; }' +
+    '.sub { color: #555; font-size: 13px; margin-top: 4px; }' +
+    '.meta { margin-bottom: 16px; font-size: 14px; }' +
+    'table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }' +
+    'th { background: #fef3c7; border: 1px solid #d97706; padding: 8px; text-align: left; color: #78350f; }' +
+    'td { border: 1px solid #e5e7eb; padding: 8px; }' +
+    '.total-card { margin-top: 16px; padding: 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; font-weight: bold; font-size: 15px; display: flex; justify-content: space-between; }' +
+    '@media print { body { padding: 0; } }' +
+    '</style></head><body>' +
+    '<div class="header">' +
+    '<h2>SEMA FURNITURE</h2>' +
+    '<div class="sub">Prop: Sewak Singh | Client Work Invoice</div>' +
+    '</div>' +
+    '<div class="meta">' +
+    '<div><strong>Client Site:</strong> ' + site + '</div>' +
+    '<div><strong>Period:</strong> ' + from + ' to ' + to + '</div>' +
+    '</div>' +
+    '<table>' +
+    '<thead><tr><th>Date</th><th>Shifts / Workers</th><th>Staff Cost</th></tr></thead>' +
+    '<tbody>' + bRows + '</tbody>' +
+    '</table>' +
+    '<div class="total-card">' +
+    '<span>Total Shifts: ' + totalShifts + '</span>' +
+    '<span style="color:#78350f;">Total Due: ₹' + totalDue + '</span>' +
+    '</div>' +
+    '</body></html>';
+}
+
+// 1. Direct PDF Share to WhatsApp using Native Web Share API
+async function shareInvoicePDF() {
+  var site = document.getElementById('billSite').value;
+  var from = document.getElementById('billFrom').value;
+  var to = document.getElementById('billTo').value;
+
+  if (!site || !from || !to) {
+    alert("Please compute the bill first.");
+    return;
+  }
+
+  var htmlString = generateInvoiceHtml();
+  var blob = new Blob([htmlString], { type: 'text/html' });
+  var fileName = 'Invoice_' + site.replace(/\s+/g, '_') + '_' + from + '_to_' + to + '.html';
+  var file = new File([blob], fileName, { type: 'text/html' });
+
+  // If your mobile browser supports sharing files (Android Chrome, iOS Safari)
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'Invoice - ' + site,
+        text: 'Invoice for ' + site + ' (' + from + ' to ' + to + ')'
+      });
+      return;
+    } catch (err) {
+      if (err.name !== 'AbortError') console.error(err);
     }
+  }
+
+  // Fallback: If direct file sharing is blocked on desktop, trigger print window to Save as PDF
+  downloadInvoicePDF();
+}
+
+// 2. Download / Print Invoice (Opens print window to choose "Save as PDF")
+function downloadInvoicePDF() {
+  var win = window.open('', '_blank');
+  if (!win) {
+    alert("Pop-up blocked. Please allow pop-ups for this site.");
+    return;
+  }
+  win.document.write(generateInvoiceHtml());
+  win.document.close();
+  win.focus();
+  setTimeout(function() {
+    win.print();
+  }, 400);
+}
+
+// 3. Fallback WhatsApp text summary (opens WhatsApp chat with itemized totals)
+    function sendBillWhatsAppText() {
+  var site = document.getElementById('billSite').value;
+  var from = document.getElementById('billFrom').value;
+  var to = document.getElementById('billTo').value;
+  var totalShifts = document.getElementById('bTotalShifts').innerText;
+  var totalDue = document.getElementById('bTotalDue').innerText;
+
+  var msg = "*SEMA FURNITURE — INVOICE*\n" +
+            "*Site:* " + site + "\n" +
+            "*Period:* " + from + " to " + to + "\n" +
+            "*Total Shifts:* " + totalShifts + "\n" +
+            "*Total Amount Due:* ₹" + totalDue;
+
+  var url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
 
     function downloadAllStaffPDF() {
   var from = document.getElementById('kFrom').value;
