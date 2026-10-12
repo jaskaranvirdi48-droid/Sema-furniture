@@ -517,66 +517,40 @@ function delSite(i) {
         <td style="border:1px solid #ddd; padding:8px; text-align:right;">₹${totalEarned.toLocaleString('en-IN')}</td>
         <td style="border:1px solid #ddd; padding:8px; text-align:right; color:#c62828;">₹${totalAdvance.toLocaleString('en-IN')}</td>
         <td style="border:1px solid #ddd; padding:8px; text-align:right; font-weight:700; color:#1b5e20;">₹${remainingWage.toLocaleString('en-IN')}</td>
-      </tr>
-    ;
+      </tr>`;
   });
 
   var printWindow = window.open('', '_blank');
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Staff Summary (${from} to ${to})</title>
-      <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 24px; color: #333; }
-        h2 { margin: 0 0 4px 0; color: #78350f; }
-        p { margin: 0 0 16px 0; color: #666; font-size: 13px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th { background: #f5f0eb; border: 1px solid #ddd; padding: 8px; text-align: center; }
-        tfoot tr td { border: 1px solid #ddd; padding: 8px; font-weight: bold; background: #fafafa; }
-        @media print {
-          body { padding: 0; }
-        }
-      </style>
-    </head>
-    <body>
-      <h2>SEMA FURNITURE — Staff Attendance & Wage Summary</h2>
-      <p>Period: <b>${from}</b> to <b>${to}</b></p>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Staff Name</th>
-            <th>Daily Wage</th>
-            <th>Present Days</th>
-            <th>Total Shifts</th>
-            <th>Total Earned</th>
-            <th>Advance Taken</th>
-            <th>Balance Due</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3" style="text-align:right;">Grand Totals:</td>
-            <td style="text-align:center;">${grandPresent}</td>
-            <td style="text-align:center;">${grandShifts}</td>
-            <td style="text-align:right;">₹${grandEarned.toLocaleString('en-IN')}</td>
-            <td style="text-align:right; color:#c62828;">₹${grandAdvance.toLocaleString('en-IN')}</td>
-            <td style="text-align:right; color:#1b5e20;">₹${grandRemaining.toLocaleString('en-IN')}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </body>
-    </html>
-  `);
+  var docContent = '<!DOCTYPE html><html><head><title>Staff Summary (' + from + ' to ' + to + ')</title>' +
+    '<style>' +
+    'body { font-family: sans-serif; padding: 24px; color: #333; }' +
+    'h2 { margin: 0 0 4px 0; color: #78350f; }' +
+    'p { margin: 0 0 16px 0; color: #666; font-size: 13px; }' +
+    'table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }' +
+    'th { background: #f5f0eb; border: 1px solid #ddd; padding: 8px; text-align: center; }' +
+    'tfoot tr td { border: 1px solid #ddd; padding: 8px; font-weight: bold; background: #fafafa; }' +
+    '@media print { body { padding: 0; } }' +
+    '</style></head><body>' +
+    '<h2>SEMA FURNITURE — Staff Attendance & Wage Summary</h2>' +
+    '<p>Period: <b>' + from + '</b> to <b>' + to + '</b></p>' +
+    '<table><thead><tr>' +
+    '<th>#</th><th>Staff Name</th><th>Daily Wage</th><th>Present Days</th><th>Total Shifts</th><th>Total Earned</th><th>Advance Taken</th><th>Balance Due</th>' +
+    '</tr></thead><tbody>' + rowsHtml + '</tbody>' +
+    '<tfoot><tr>' +
+    '<td colspan="3" style="text-align:right;">Grand Totals:</td>' +
+    '<td style="text-align:center;">' + grandPresent + '</td>' +
+    '<td style="text-align:center;">' + grandShifts + '</td>' +
+    '<td style="text-align:right;">₹' + grandEarned.toLocaleString('en-IN') + '</td>' +
+    '<td style="text-align:right; color:#c62828;">₹' + grandAdvance.toLocaleString('en-IN') + '</td>' +
+    '<td style="text-align:right; color:#1b5e20;">₹' + grandRemaining.toLocaleString('en-IN') + '</td>' +
+    '</tr></tfoot></table></body></html>';
+
+  printWindow.document.write(docContent);
   printWindow.document.close();
   printWindow.focus();
   setTimeout(function() {
     printWindow.print();
-  }, 300);
+  }, 400);
 }
     function makeKhata() {
       var staff = document.getElementById('kStaff').value;
