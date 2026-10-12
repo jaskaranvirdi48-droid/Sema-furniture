@@ -148,7 +148,14 @@
         <h3 id="kNameHead" style="color:#78350f; font-size:15px;"></h3>
         <p id="kPeriod" style="font-size:11px; color:#666;"></p>
         <table>
-          <thead><tr><th>Date</th><th>Site</th><th>Advance</th></tr></thead>
+          <thead>
+            <tr>
+              <th style="padding:6px; border-bottom:1px solid #ddd;">Date</th>
+              <th style="padding:6px; border-bottom:1px solid #ddd;">Site</th>
+              <th style="padding:6px; border-bottom:1px solid #ddd; text-align:center;">Shifts</th>
+              <th style="padding:6px; border-bottom:1px solid #ddd; text-align:right;">Advance</th>
+            </tr>
+          </thead>
           <tbody id="kRows"></tbody>
         </table>
         <div style="margin-top:10px; padding:10px; background:#f5f5f4; border-radius:6px; font-size:12px;">
@@ -567,41 +574,112 @@ function delSite(i) {
       var to = document.getElementById('kTo').value;
       if (!staff || !from || !to) { alert("Select staff and dates."); return; }
 
+      // Get daily wage
       var wage = 0;
       for (var s = 0; s < data.staff.length; s++) {
-        if (data.staff[s].name === staff) wage = data.staff[s].wage;
-      }
-
-      var days = 0; var adv = 0; var h = '';
-      for (var i = 0; i < data.logs.length; i++) {
-        var l = data.logs[i];
-        if (l.staff === staff && l.date >= from && l.date <= to) {
-          days += l.shift;
-          if (Number(l.adv) > 0) {
-            adv += Number(l.adv);
-            var origIdx = data.logs.indexOf(l);
-          h += `<tr>
-            <td>${l.date}</td>
-            <td>${l.site}</td>
-            <td>${l.shift}</td>
-            <td>₹${l.adv || 0}</td>
-            <td><button onclick="editEntry(${origIdx})" style="padding:2px 6px; font-size:11px; background:#78350f; color:#fff; border:none; border-radius:4px; cursor:pointer;">Edit</button></td>
-          </tr>`;
-          }
+        var sObj = data.staff[s];
+        var sName = typeof sObj === 'object' && sObj !== null ? sObj.name : sObj;
+        if (sName === staff) {
+          wage = typeof sObj === 'object' && sObj.wage ? Number(sObj.wage) : 0;
+          break;
         }
       }
-
-      var gross = days * wage;
-      var net = gross - adv;
-
-      document.getElementById('kNameHead').textContent = staff + " (₹" + wage + "/day)";
-      document.getElementById('kPeriod').textContent = from + ' to ' + to;
-      document.getElementById('kDays').textContent = days;
-      document.getElementById('kGross').textContent = gross.toLocaleString('en-IN');
-      document.getElementById('kAdv').textContent = adv.toLocaleString('en-IN');
-      document.getElementById('kNet').textContent = net.toLocaleString('en-IN');
-      document.getElementById('kRows').innerHTML = h || '<tr><td colspan="3">No advances.</td></tr>';
-      document.getElementById('khataBox').className = 'card';
+      
+      // Map existing logs by date for quick lookup
+      var logsByDate = {};
+      (data.logs || []).forEach(function(l) {
+        if (!l.date) return;
+        
+        var logStaffName = l.staff || l.worker || l.name;
+        var shiftVal = 0;
+        var advVal = 0;
+        var siteVal = l.site || '-';
+        
+        if (logStaffName === staff) {
+          shiftVal = l.shift !== undefined ? Number(l.shift) : 1;
+          advVal = Number(l.advance || l.adv || 0);
+        }
+        
+        if (l.workers && Array.isArray(l.workers)) {
+          l.workers.forEach(function(w) {
+            var subName = typeof w === 'object' && w !== null ? (w.name || w.staff) : w;
+            if (subName === staff) {
+              shiftVal = typeof w === 'object' && w.shift !== undefined ? Number(w.shift) : 1;
+              advVal = typeof w === 'object' ? Number(w.advance || w.adv || 0) : 0;
+            }
+          });
+        }
+        
+        if (logStaffName === staff || (l.workers && l.workers.some(function(w){ return (w.name || w.staff || w) === staff; }))) {
+          logsByDate[l.date] = {
+            site: siteVal,
+            shift: shiftVal,
+            adv: advVal
+          };
+        }
+      });
+      
+      // Iterate across every single calendar day from start to end
+      var cur = new Date(from);
+      var endDate = new Date(to);
+      var totalShifts = 0;
+      var totalAdv = 0;
+      var rowsHtml = '';
+      
+      while (cur <= endDate) {
+        var dStr = cur.toISOString().split('T')[0];
+        var entry = logsByDate[dStr];
+        
+        if (entry && (entry.shift > 0 || entry.adv > 0)) {
+          totalShifts += entry.shift;
+          totalAdv += entry.adv;
+          
+          rowsHtml += '<tr style="border-bottom:1px solid #eee;">' +
+            '<td style="padding:6px 4px;">' + dStr + '</td>' +
+            '<td style="padding:6px 4px;">' + entry.site + '</td>' +
+            '<td style="padding:6px 4px; text-align:center; font-weight:600;">' + entry.shift + '</td>' +
+            '<td style="padding:6px 4px; text-align:right; color:#c62828;">' + (entry.adv > 0 ? '₹' + entry.adv : '-') + '</td>' +
+            '</tr>';
+        } else {
+          // Absent / Not working day
+          rowsHtml += '<tr style="border-bottom:1px solid #eee; background:#fafafa; color:#888;">' +
+            '<td style="padding:6px 4px;">' + dStr + '</td>' +
+            '<td style="padding:6px 4px; font-style:italic;">Absent / No Record</td>' +
+            '<td style="padding:6px 4px; text-align:center;">0</td>' +
+            '<td style="padding:6px 4px; text-align:right;">-</td>' +
+            '</tr>';
+        }
+        
+        cur.setDate(cur.getDate() + 1);
+      }
+      
+      // Update DOM details
+      var nameHead = document.getElementById('kNameHead');
+      if (nameHead) nameHead.innerText = staff + ' (₹' + wage + '/day)';
+      
+      var periodEl = document.getElementById('kPeriod');
+      if (periodEl) periodEl.innerText = from + ' to ' + to;
+      
+      var kRows = document.getElementById('kRows');
+      if (kRows) kRows.innerHTML = rowsHtml;
+      
+      var gross = totalShifts * wage;
+      var net = gross - totalAdv;
+      
+      var dWork = document.getElementById('kDays') || document.getElementById('kTotalShifts');
+      if (dWork) dWork.innerText = totalShifts;
+      
+      var gWage = document.getElementById('kGross');
+      if (gWage) gWage.innerText = '₹' + gross.toLocaleString('en-IN');
+      
+      var advEl = document.getElementById('kAdv');
+      if (advEl) advEl.innerText = '- ₹' + totalAdv.toLocaleString('en-IN');
+      
+      var netEl = document.getElementById('kNet');
+      if (netEl) netEl.innerText = '₹' + net.toLocaleString('en-IN');
+      
+      var box = document.getElementById('khataBox');
+      if (box) box.classList.remove('hidden');
     }
     function editEntry(index) {
   var item = data.logs[index];
